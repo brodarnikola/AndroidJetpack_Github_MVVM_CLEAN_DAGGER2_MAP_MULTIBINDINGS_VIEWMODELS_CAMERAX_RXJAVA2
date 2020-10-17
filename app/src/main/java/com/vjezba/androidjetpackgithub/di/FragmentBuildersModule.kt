@@ -36,6 +36,9 @@ abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
     abstract fun contributeLanguageDetailsFragment(): LanguageDetailsFragment
 
+    @ContributesAndroidInjector
+    abstract fun contributeGalleryFragment(): GalleryFragment
+
 
 
 }

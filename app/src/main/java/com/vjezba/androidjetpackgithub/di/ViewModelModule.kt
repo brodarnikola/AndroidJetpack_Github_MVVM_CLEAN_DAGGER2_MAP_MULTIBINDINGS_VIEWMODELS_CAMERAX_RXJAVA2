@@ -44,6 +44,11 @@ abstract class ViewModelModule {
     @ViewModelKey(LanguageDetailsViewModel::class)
     abstract fun bindLanguageDetaislViewModel(viewModel: LanguageDetailsViewModel): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(GalleryViewModel::class)
+    abstract fun bindGalleryViewModel(viewModel: GalleryViewModel): ViewModel
+
 
 
 
