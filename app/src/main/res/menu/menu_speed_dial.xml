@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_slideshow_fragment"
+        android:icon="@drawable/ic_add_24dp"
+        android:title="Pagging DB and Network" />
+
+    <item
+        android:id="@+id/action_dance"
+        android:icon="@drawable/ic_dance_24dp"
+        android:title="Dagger2 Lego Example" />
+
+    <item
+        android:id="@+id/action_dogo"
+        android:icon="@drawable/ic_doggo_24dp"
+        android:title="Doggo" />
+</menu>
