@@ -30,9 +30,11 @@ abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
     abstract fun contributeSavedLanguagesFragment(): SavedLanguagesFragment
 
-
     @ContributesAndroidInjector
     abstract fun contributeLanguagesFragment(): LanguagesFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeLanguageDetailsFragment(): LanguageDetailsFragment
 
 
 

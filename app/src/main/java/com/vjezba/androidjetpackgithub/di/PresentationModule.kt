@@ -39,7 +39,7 @@ val presentationModule = module {
   viewModel { GalleryViewModel(get()) }
   //viewModel { (handle: SavedStateHandle) -> LanguagesListViewModel(handle, get()) }
   viewModel { SavedLanguagesListViewModel(get()) }
-  viewModel { (languagedId : Int) -> LanguageDetailsViewModel(get(), get(), languagedId) }
+  //viewModel { (languagedId : Int) -> LanguageDetailsViewModel(get(), get(), languagedId) }
   viewModel { LoginViewModel(get()) }
   factory { RegistrationViewModel(get()) }
   viewModel { EnterDetailsViewModel() }
