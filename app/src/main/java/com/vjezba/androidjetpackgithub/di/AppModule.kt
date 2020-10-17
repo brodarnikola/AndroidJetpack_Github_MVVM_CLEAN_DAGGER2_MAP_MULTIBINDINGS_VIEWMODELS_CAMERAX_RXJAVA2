@@ -3,8 +3,7 @@ package com.vjezba.androidjetpackgithub.di
 import android.app.Application
 import com.vjezba.androidjetpackgithub.BuildConfig
 import com.vjezba.data.database.AppDatabase
-import com.vjezba.data.di.StorageModule
-import com.vjezba.data.di.UserManagerModule
+import com.vjezba.data.di.*
 import com.vjezba.data.lego.api.AuthInterceptor
 import com.vjezba.data.lego.CoreDataModule
 import com.vjezba.data.lego.api.LegoService
@@ -18,7 +17,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@Module(includes = [ViewModelModule::class, CoreDataModule::class, StorageModule::class, UserManagerModule::class])
+@Module(includes = [ViewModelModule::class, CoreDataModule::class, StorageModule::class, UserManagerModule::class, RepositoryModule::class, DatabaseModule::class, MapperModule::class])
 class AppModule {
 
     @Singleton

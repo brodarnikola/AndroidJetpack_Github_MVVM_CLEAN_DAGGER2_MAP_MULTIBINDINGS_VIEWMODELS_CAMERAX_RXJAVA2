@@ -16,6 +16,7 @@
 
 package com.vjezba.data.di
 
+import android.app.Application
 import android.content.Context
 import com.vjezba.data.database.AppDatabase
 import com.vjezba.data.database.dao.LanguagesDao
@@ -31,11 +32,9 @@ import javax.inject.Singleton
 @Module
 class DatabaseModule {
 
-    @Singleton
+   /* @Singleton
     @Provides
-    fun provideAppDatabase(context: Context): AppDatabase {
-        return AppDatabase.getInstance(context)
-    }
+    fun provideAppDatabase( app: Application) = AppDatabase.getInstance(app)*/
 
     @Provides
     fun providePlantDao(appDatabase: AppDatabase): LanguagesDao {

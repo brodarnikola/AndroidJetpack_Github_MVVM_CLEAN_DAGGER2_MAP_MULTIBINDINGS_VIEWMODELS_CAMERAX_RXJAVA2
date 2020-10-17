@@ -1,10 +1,7 @@
 package com.vjezba.androidjetpackgithub.di
 
 
-import com.vjezba.androidjetpackgithub.ui.fragments.EnterDetailsFragment
-import com.vjezba.androidjetpackgithub.ui.fragments.LegoSetFragment
-import com.vjezba.androidjetpackgithub.ui.fragments.LegoSetsFragment
-import com.vjezba.androidjetpackgithub.ui.fragments.LegoThemeFragment
+import com.vjezba.androidjetpackgithub.ui.fragments.*
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -22,6 +19,21 @@ abstract class FragmentBuildersModule {
     abstract fun contributeLegoSetFragment(): LegoSetFragment
 
 
+
+
     @ContributesAndroidInjector
     abstract fun contributeEnterDetailsFragment(): EnterDetailsFragment
+
+
+
+
+    @ContributesAndroidInjector
+    abstract fun contributeSavedLanguagesFragment(): SavedLanguagesFragment
+
+
+    @ContributesAndroidInjector
+    abstract fun contributeLanguagesFragment(): LanguagesFragment
+
+
+
 }

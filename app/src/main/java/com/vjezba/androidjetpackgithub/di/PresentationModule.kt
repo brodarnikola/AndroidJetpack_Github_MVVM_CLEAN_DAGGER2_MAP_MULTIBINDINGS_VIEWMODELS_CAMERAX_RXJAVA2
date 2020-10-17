@@ -37,7 +37,7 @@ import org.koin.dsl.module
 
 val presentationModule = module {
   viewModel { GalleryViewModel(get()) }
-  viewModel { (handle: SavedStateHandle) -> LanguagesListViewModel(handle, get()) }
+  //viewModel { (handle: SavedStateHandle) -> LanguagesListViewModel(handle, get()) }
   viewModel { SavedLanguagesListViewModel(get()) }
   viewModel { (languagedId : Int) -> LanguageDetailsViewModel(get(), get(), languagedId) }
   viewModel { LoginViewModel(get()) }

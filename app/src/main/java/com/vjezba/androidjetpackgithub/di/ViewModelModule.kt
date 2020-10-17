@@ -29,6 +29,18 @@ abstract class ViewModelModule {
 
 
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(SavedLanguagesListViewModel::class)
+    abstract fun bindSavedLanguagesViewModel(viewModel: SavedLanguagesListViewModel): ViewModel
+
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LanguagesListViewModel::class)
+    abstract fun bindLanguagesListViewModel(viewModel: LanguagesListViewModel): ViewModel
+
 
 
 

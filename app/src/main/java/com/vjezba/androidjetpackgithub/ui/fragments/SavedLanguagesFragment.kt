@@ -7,16 +7,21 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.ui.adapters.ALL_GITHUBS
 import com.vjezba.androidjetpackgithub.ui.adapters.SavedLanguagesAdapter
 import com.vjezba.androidjetpackgithub.databinding.FragmentSavedLanguagesBinding
+import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.viewmodels.GalleryViewModel
+import com.vjezba.androidjetpackgithub.viewmodels.LegoThemeViewModel
 import com.vjezba.androidjetpackgithub.viewmodels.SavedLanguagesListViewModel
 import com.vjezba.domain.model.SavedAndAllLanguages
 import com.vjezba.domain.model.SavedLanguages
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 
 /**
@@ -24,17 +29,23 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * Use the [SavedLanguagesFragment.newInstance] factory method to
  * create an instance of this fragments.
  */
-class SavedLanguagesFragment : Fragment() {
+class SavedLanguagesFragment : Fragment(), Injectable {
 
     private lateinit var binding: FragmentSavedLanguagesBinding
 
-    private val viewModel : SavedLanguagesListViewModel by viewModel()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: SavedLanguagesListViewModel
+    //private val viewModel : SavedLanguagesListViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        viewModel = injectViewModel(viewModelFactory)
+
         binding = FragmentSavedLanguagesBinding.inflate(inflater, container, false)
         val adapter =
             SavedLanguagesAdapter( { position: Int -> setDeleteLanguageClickListener(position) })
