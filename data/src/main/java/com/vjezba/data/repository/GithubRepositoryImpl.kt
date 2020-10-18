@@ -59,6 +59,14 @@ class GithubRepositoryImpl  constructor(
         return repositoryDetailsResponse.map { dbMapper.mapPagingRepositoryDetailsResponseDbToPagingRepositoryDetailsResponse(it) }
     }
 
+    override fun searchGithubRepositoryByLastUpdateTime(query: String): Flow<PagingData<RepositoryDetailsResponse>> {
+        return Pager(
+            config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
+            pagingSourceFactory = { GithubRepositorySourceLastUpdateTime(service, query) }
+        ).flow.map { dbMapper!!.mapApiResponseGithubToDomainGithub(it) }
+    }
+
+
     companion object {
         private const val NETWORK_PAGE_SIZE = 50
     }

@@ -44,4 +44,11 @@ interface GithubRepositoryApi {
         @Query("per_page") perPage: Int
     ): RepositoryResponseApi
 
+    @GET("search/repositories?sort=updated&order=desc")
+    suspend fun searchGithubRepositoryByLastUpdateTime(
+        @Query("q") query: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int
+    ): RepositoryResponseApi
+
 }

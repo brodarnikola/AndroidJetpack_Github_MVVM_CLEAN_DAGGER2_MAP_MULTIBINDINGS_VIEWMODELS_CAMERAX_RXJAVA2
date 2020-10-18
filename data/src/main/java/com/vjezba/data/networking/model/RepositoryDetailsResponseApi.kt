@@ -1,6 +1,7 @@
 package com.vjezba.data.networking.model
 
 import com.google.gson.annotations.SerializedName
+import com.vjezba.data.repository.GithubRepositorySourceLastUpdateTime
 
 
 data class RepositoryDetailsResponseApi(
@@ -18,5 +19,7 @@ data class RepositoryDetailsResponseApi(
     @SerializedName("stargazers_count")
     val stars: Int = 0,
     @SerializedName("forks_count")
-    val forks: Int = 0
+    val forks: Int = 0,
+    @SerializedName("updated_at")
+    val lastUpdateTime: String? = ""
 )

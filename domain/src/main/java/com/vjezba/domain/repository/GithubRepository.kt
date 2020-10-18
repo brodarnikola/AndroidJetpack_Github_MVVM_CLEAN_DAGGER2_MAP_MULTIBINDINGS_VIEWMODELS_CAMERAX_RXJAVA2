@@ -27,4 +27,7 @@ interface GithubRepository {
 
 
     fun getSearchRepositoriesWithMediatorAndPaggingData(query: String) : Flow<PagingData<RepositoryDetailsResponse>>
+
+
+    fun searchGithubRepositoryByLastUpdateTime(query: String) : Flow<PagingData<RepositoryDetailsResponse>>
 }

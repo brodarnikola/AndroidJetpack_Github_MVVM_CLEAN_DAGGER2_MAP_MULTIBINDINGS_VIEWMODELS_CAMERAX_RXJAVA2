@@ -1,53 +1,55 @@
 package com.vjezba.androidjetpackgithub.ui.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.vjezba.androidjetpackgithub.R
-import com.vjezba.androidjetpackgithub.databinding.FragmentPaggingNetworkAndDbDataBinding
 import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.injectViewModel
-import com.vjezba.androidjetpackgithub.ui.adapters.languagerepos.ReposAdapter
-import com.vjezba.androidjetpackgithub.ui.adapters.languagerepos.ReposLoadStateAdapter
-import com.vjezba.androidjetpackgithub.viewmodels.PaggingWithNetworkAndDbDataViewModel
+import com.vjezba.androidjetpackgithub.ui.adapters.GalleryAdapter
+import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesAdapter
+import com.vjezba.androidjetpackgithub.viewmodels.GalleryRepositoriesViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.android.synthetic.main.fragment_repositories.*
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import java.io.InvalidObjectException
 import javax.inject.Inject
 
 
 class RepositoriesFragment : Fragment(), Injectable {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: PaggingWithNetworkAndDbDataViewModel
-
-    //private val viewModel : PaggingWithNetworkAndDbDataViewModel by viewModel()
-
-    private val adapter = ReposAdapter()
-
     private var progressBarRepos: ProgressBar? = null
     private var languageListRepository: RecyclerView? = null
+    private var btnFind: Button? = null
+    private var etInserText: EditText? = null
 
+    private val adapter = RepositoriesAdapter()
     private var searchJob: Job? = null
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var repositoriesViewModel: GalleryRepositoriesViewModel
+
+    var currentSearchText: String = ""
+    var lastCurrentSearchText: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,33 +57,29 @@ class RepositoriesFragment : Fragment(), Injectable {
         savedInstanceState: Bundle?
     ): View? {
 
-        viewModel = injectViewModel(viewModelFactory)
+        repositoriesViewModel = injectViewModel(viewModelFactory)
 
         val binding = FragmentRepositoriesBinding.inflate(inflater, container, false)
         context ?: return binding.root
 
-        activity?.toolbar?.title = getString(R.string.gallery_title)
-        activity?.speedDial?.visibility = View.GONE
-
         progressBarRepos = binding.progressBarRepositories
         languageListRepository = binding.languageListRepos
+        btnFind = binding.btnFind
+        etInserText = binding.etInsertText
 
+        binding.languageListRepos.adapter = adapter
+        search()
+        setEdittextListener()
 
-        // add dividers between RecyclerView's row items
-        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        binding.languageListRepos.addItemDecoration(decoration)
-
-        binding.languageListRepos.adapter = adapter.withLoadStateHeaderAndFooter(
-            header = ReposLoadStateAdapter { adapter.retry() },
-            footer = ReposLoadStateAdapter { adapter.retry() }
-        )
+        activity?.speedDial?.visibility = View.GONE
+        activity?.toolbar?.title = getString(R.string.gallery_title)
 
         adapter.addLoadStateListener { loadState ->
             binding.languageListRepos.isVisible = loadState.source.refresh is LoadState.NotLoading
             // Show loading spinner during initial load or refresh.
             binding.progressBarRepositories.isVisible = loadState.source.refresh is LoadState.Loading
-            // Show the retry state if initial load or refresh fails.
-            binding.retryButton.isVisible = loadState.source.refresh is LoadState.Error
+
+            binding.btnFind.isEnabled = loadState.source.refresh is LoadState.NotLoading
 
             // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
             val errorState = loadState.source.append as? LoadState.Error
@@ -89,41 +87,72 @@ class RepositoriesFragment : Fragment(), Injectable {
                 ?: loadState.append as? LoadState.Error
                 ?: loadState.prepend as? LoadState.Error
             errorState?.let {
-                if( it.error != InvalidObjectException("") ) {
-                    Toast.makeText(
-                        requireContext(),
-                        "\uD83D\uDE28 Wooops ${it.error}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                Toast.makeText(
+                    requireContext(),
+                    "\uD83D\uDE28 Wooops ${it.error}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
-
 
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun setEdittextListener() {
 
-        searchJob?.cancel()
-        searchJob = lifecycleScope.launch {
-            viewModel.searchRepo("java").collectLatest {
-                adapter.submitData(it)
+        etInserText?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(
+                s: CharSequence, start: Int,
+                count: Int, after: Int
+            ) {
             }
-        }
 
-        // Scroll to top when the list is refreshed from network.
-        lifecycleScope.launch {
-            adapter.loadStateFlow
-                // Only emit when REFRESH LoadState for RemoteMediator changes.
-                .distinctUntilChangedBy { it.refresh }
-                // Only react to cases where Remote REFRESH completes i.e., NotLoading.
-                .filter { it.refresh is LoadState.NotLoading }
-                .collect { languageListRepository?.scrollToPosition(0) }
-        }
-
+            override fun onTextChanged(
+                s: CharSequence, start: Int,
+                before: Int, count: Int
+            ) {
+                currentSearchText = s.toString()
+            }
+        })
     }
 
-
+    private fun search() {
+        btnFind?.setOnClickListener {
+            if( currentSearchText != "" ) {
+                // Make sure we cancel the previous job before creating a new one
+                if (currentSearchText == lastCurrentSearchText) {
+                    searchJob?.cancel()
+                    searchJob = lifecycleScope.launch {
+                        repositoriesViewModel.searchGithubRepositoryByLastUpdateTime(
+                            currentSearchText
+                        )
+                            .collectLatest {
+                                adapter.submitData(it)
+                            }
+                    }
+                } else {
+                    lastCurrentSearchText = currentSearchText
+                    adapter.notifyItemRangeRemoved(0, adapter.itemCount)
+                    searchJob?.cancel()
+                    searchJob = lifecycleScope.launch {
+                        delay(1000)
+                        repositoriesViewModel.searchGithubRepositoryByLastUpdateTime(
+                            currentSearchText
+                        )
+                            .collectLatest {
+                                adapter.submitData(it)
+                            }
+                    }
+                }
+            }
+            else {
+                Snackbar.make(
+                    this@RepositoriesFragment.requireView(),
+                    "You did not insert any text to search repositories.",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
 }

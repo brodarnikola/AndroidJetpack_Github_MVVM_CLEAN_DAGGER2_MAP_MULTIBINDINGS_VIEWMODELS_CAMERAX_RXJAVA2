@@ -12,6 +12,7 @@ import dagger.multibindings.IntoMap
 @Module
 abstract class ViewModelModule {
 
+    // login, registration viewmodels
     @Binds
     @IntoMap
     @ViewModelKey(LoginViewModel::class)
@@ -28,11 +29,11 @@ abstract class ViewModelModule {
     abstract fun bindEnterDetailsViewModel(viewModel: EnterDetailsViewModel): ViewModel
 
 
+    // programing languages viewmodels
     @Binds
     @IntoMap
     @ViewModelKey(LanguagesActivityViewModel::class)
     abstract fun bindLanguagesActivityViewModel(viewModel: LanguagesActivityViewModel): ViewModel
-
 
     @Binds
     @IntoMap
@@ -51,12 +52,11 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(GalleryViewModel::class)
-    abstract fun bindGalleryViewModel(viewModel: GalleryViewModel): ViewModel
+    @ViewModelKey(GalleryRepositoriesViewModel::class)
+    abstract fun bindGalleryViewModel(repositoriesViewModel: GalleryRepositoriesViewModel): ViewModel
 
 
-
-
+    // pagging with network and database viewmodels
     @Binds
     @IntoMap
     @ViewModelKey(PaggingWithNetworkAndDbViewModel::class)
@@ -67,6 +67,8 @@ abstract class ViewModelModule {
     @ViewModelKey(PaggingWithNetworkAndDbDataViewModel::class)
     abstract fun bindPaggingWithNetworkAndDbDataViewModel(viewModel: PaggingWithNetworkAndDbDataViewModel): ViewModel
 
+
+    // repositories viewmodels
 
 
     @Binds
