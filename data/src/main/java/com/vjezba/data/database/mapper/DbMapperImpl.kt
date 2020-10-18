@@ -93,7 +93,7 @@ class DbMapperImpl : DbMapper {
             with(it) {
                 RepositoryDetailsResponse(
                     id,
-                    RepositoryOwnerResponse(ownerApi.avatarUrl),
+                    RepositoryOwnerResponse(ownerApi.login, ownerApi.avatarUrl),
                     name,
                     description,
                     html_url,

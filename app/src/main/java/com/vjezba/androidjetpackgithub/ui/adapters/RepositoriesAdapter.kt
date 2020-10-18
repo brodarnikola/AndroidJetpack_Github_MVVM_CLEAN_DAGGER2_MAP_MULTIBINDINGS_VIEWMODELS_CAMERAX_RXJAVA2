@@ -19,11 +19,16 @@ package com.vjezba.androidjetpackgithub.ui.adapters
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.vjezba.androidjetpackgithub.databinding.ListRepositoryDataBinding
+import com.vjezba.androidjetpackgithub.ui.fragments.HomeViewPagerFragmentDirections
+import com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesFragment
+import com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesFragmentDirections
 import com.vjezba.androidjetpackgithub.viewmodels.SavedAndAllLanguagesViewModel
 import com.vjezba.domain.model.RepositoryDetailsResponse
 
@@ -55,24 +60,22 @@ class RepositoriesAdapter : PagingDataAdapter<RepositoryDetailsResponse, Reposit
     class RepositoriesViewHolder(
         private val binding: ListRepositoryDataBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-//        init {
-//            binding.setClickListener { view ->
-//                binding.photo?.let { photo ->
-//                    val uri = Uri.parse(photo.html_url)
-//                    val intent = Intent(Intent.ACTION_VIEW, uri)
-//                    view.context.startActivity(intent)
-//                }
-//            }
-//        }
+        init {
+            binding.setClickListener { view ->
+                binding.repo?.let { repo ->
+                    navigateToRepositoryDetails(repo, view)
+                }
+            }
+        }
+
+        private fun navigateToRepositoryDetails(repo: RepositoryDetailsResponse, view: View?) {
+            val direction = RepositoriesFragmentDirections.repositoryFragmentToDetailsRepositoryFragment(repo.name.toString(), repo.lastUpdateTime.toString(), repo.ownerApi.login, repo.description.toString())
+            view?.findNavController()?.navigate(direction)
+        }
 
         fun bind(item: RepositoryDetailsResponse) {
-//            with(binding) {
-//                binding.repositorieName.text = item.name
-//                binding.lastUpdateTime.text = item.html_url
-//                executePendingBindings()
-//            }
             binding.apply {
-                photo = item
+                repo = item
                 binding.repositorieName.text = item.name
                 binding.lastUpdateTime.text = item.lastUpdateTime
                 executePendingBindings()

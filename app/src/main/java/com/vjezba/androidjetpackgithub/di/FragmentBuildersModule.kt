@@ -36,6 +36,6 @@ abstract class FragmentBuildersModule {
 
 
     @ContributesAndroidInjector
-    abstract fun contributeRepositorySearchFragment(): RepositoriesFragment
+    abstract fun contributeRepositoriesSearchFragment(): RepositoriesFragment
 
 }

@@ -97,8 +97,39 @@
         android:id="@+id/repository_fragment"
         android:name="com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesFragment"
         android:label="@string/menu_repositories_search_fragment"
-        tools:layout="@layout/fragment_pagging_network_and_db" >
+        tools:layout="@layout/fragment_repositories" >
 
+        <action
+            android:id="@+id/repository_fragment_to_details_repository_fragment"
+            app:destination="@id/repository_details_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/repository_details_fragment"
+        android:name="com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesDetailsFragment"
+        android:label="@string/menu_repositories_search_fragment"
+        tools:layout="@layout/fragment_repositories_details" >
+
+        <argument
+            android:name="repositoryName"
+            app:argType="string" />
+
+        <argument
+            android:name="lastUpdateTime"
+            app:argType="string" />
+
+        <argument
+            android:name="ownerName"
+            app:argType="string" />
+
+        <argument
+            android:name="description"
+            app:argType="string" />
 
     </fragment>
 
