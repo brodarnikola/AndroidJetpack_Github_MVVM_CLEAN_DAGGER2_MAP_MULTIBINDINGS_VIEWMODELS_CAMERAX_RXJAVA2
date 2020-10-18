@@ -32,9 +32,9 @@ import javax.inject.Singleton
 @Module
 class DatabaseModule {
 
-   /* @Singleton
+   @Singleton
     @Provides
-    fun provideAppDatabase( app: Application) = AppDatabase.getInstance(app)*/
+    fun provideAppDatabase( app: Application) = AppDatabase.getInstance(app)
 
     @Provides
     fun providePlantDao(appDatabase: AppDatabase): LanguagesDao {
