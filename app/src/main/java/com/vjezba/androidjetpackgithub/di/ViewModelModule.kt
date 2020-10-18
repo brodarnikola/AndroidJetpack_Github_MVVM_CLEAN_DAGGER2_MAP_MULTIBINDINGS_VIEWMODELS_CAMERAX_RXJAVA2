@@ -52,8 +52,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(GalleryViewModel::class)
-    abstract fun bindGalleryViewModel(viewModel: GalleryViewModel): ViewModel
+    @ViewModelKey(GalleryRepositoriesViewModel::class)
+    abstract fun bindGalleryViewModel(repositoriesViewModel: GalleryRepositoriesViewModel): ViewModel
 
 
     // pagging with network and database viewmodels

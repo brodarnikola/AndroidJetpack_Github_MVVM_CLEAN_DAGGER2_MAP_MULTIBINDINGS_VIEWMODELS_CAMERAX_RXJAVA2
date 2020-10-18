@@ -24,7 +24,7 @@ import com.vjezba.domain.repository.GithubRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GalleryViewModel @Inject internal constructor(
+class GalleryRepositoriesViewModel @Inject internal constructor(
     private val repository: GithubRepository
 ) : ViewModel() {
 

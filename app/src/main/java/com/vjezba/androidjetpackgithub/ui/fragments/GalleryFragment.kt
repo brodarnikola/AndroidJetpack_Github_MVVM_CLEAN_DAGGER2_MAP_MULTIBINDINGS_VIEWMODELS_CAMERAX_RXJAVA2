@@ -34,7 +34,7 @@ import com.vjezba.androidjetpackgithub.ui.adapters.GalleryAdapter
 import com.vjezba.androidjetpackgithub.databinding.FragmentGalleryBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.injectViewModel
-import com.vjezba.androidjetpackgithub.viewmodels.GalleryViewModel
+import com.vjezba.androidjetpackgithub.viewmodels.GalleryRepositoriesViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -51,12 +51,12 @@ class GalleryFragment : Fragment(), Injectable {
     private val args: GalleryFragmentArgs by navArgs()
     private var searchJob: Job? = null
 
-    //private val viewModel : GalleryViewModel by viewModel()
+    //private val repositoriesViewModel : GalleryRepositoriesViewModel by repositoriesViewModel()
 
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: GalleryViewModel
+    private lateinit var repositoriesViewModel: GalleryRepositoriesViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +64,7 @@ class GalleryFragment : Fragment(), Injectable {
         savedInstanceState: Bundle?
     ): View? {
 
-        viewModel = injectViewModel(viewModelFactory)
+        repositoriesViewModel = injectViewModel(viewModelFactory)
 
         val binding = FragmentGalleryBinding.inflate(inflater, container, false)
         context ?: return binding.root
@@ -104,7 +104,7 @@ class GalleryFragment : Fragment(), Injectable {
         // Make sure we cancel the previous job before creating a new one
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
-            viewModel.searchGithubRepositoryByProgrammingLanguage(query).collectLatest {
+            repositoriesViewModel.searchGithubRepositoryByProgrammingLanguage(query).collectLatest {
                 adapter.submitData(it)
             }
         }
