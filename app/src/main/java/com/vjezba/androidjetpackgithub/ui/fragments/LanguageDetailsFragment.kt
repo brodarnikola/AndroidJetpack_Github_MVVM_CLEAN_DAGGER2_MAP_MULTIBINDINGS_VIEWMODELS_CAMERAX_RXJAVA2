@@ -22,22 +22,32 @@ import android.view.*
 import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.databinding.FragmentLanguageDetailsBinding
+import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.viewmodels.LanguageDetailsViewModel
 import com.vjezba.domain.model.Languages
 import kotlinx.android.synthetic.main.activity_languages_main.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
+import kotlinx.android.synthetic.main.fragment_language_details.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 /**
  * A fragments representing a single Plant detail screen.
  */
-class LanguageDetailsFragment : Fragment() {
+class LanguageDetailsFragment : Fragment(), Injectable {
 
     private val args: LanguageDetailsFragmentArgs by navArgs()
 
@@ -45,28 +55,38 @@ class LanguageDetailsFragment : Fragment() {
         InjectorUtils.provideLanguageDetailsViewModelFactory(requireActivity(), args.languagesId)
     }*/
 
-    private val languageDetailsViewModel : LanguageDetailsViewModel by viewModel {
-        parametersOf( args.languagesId)
-    }
+//    private val languageDetailsViewModel : LanguageDetailsViewModel by viewModel {
+//        parametersOf( args.languagesId)
+//    }
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var languageDetailsViewModel: LanguageDetailsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        languageDetailsViewModel = injectViewModel(viewModelFactory)
+
         val binding = DataBindingUtil.inflate<FragmentLanguageDetailsBinding>(
             inflater,
             R.layout.fragment_language_details,
             container,
             false
         ).apply {
+
+            val languageId = args.languagesId
+
             viewModel = languageDetailsViewModel
             lifecycleOwner = viewLifecycleOwner
             callback =
                 Callback { repoDetails ->
                     repoDetails?.let {
                         hideAppBarFab(fab)
-                        languageDetailsViewModel.saveProgrammingLanguage()
+                        languageDetailsViewModel.saveProgrammingLanguage(languageId)
                         Snackbar.make(
                             root,
                             R.string.saved_language_successfully,
@@ -75,6 +95,37 @@ class LanguageDetailsFragment : Fragment() {
                             .show()
                     }
                 }
+
+//                val result = languageDetailsViewModel.isLanguageSaved(languageId)
+//                    if(result.value!!) {
+//                        fab.hide()
+//                    }
+//                    else
+//                        fab.show()
+
+
+            languageDetailsViewModel.isLanguageSaved(languageId)
+                .observe(viewLifecycleOwner, Observer { isLanguageSaved ->
+                    if (isLanguageSaved != null && isLanguageSaved) {
+                        fab.hide()
+                    } else {
+                        fab.show()
+                        fab.setOnClickListener {
+                            ///callback. .add(viewModel.languageDetails)}
+                            //callback.add(languageDetailsViewModel.getLanguageDetails(languageId))
+                            hideAppBarFab(fab)
+                            languageDetailsViewModel.saveProgrammingLanguage(languageId)
+                            Snackbar.make(
+                                root,
+                                R.string.saved_language_successfully,
+                                Snackbar.LENGTH_LONG
+                            )
+                                .show()
+                        }
+                    }
+                })
+
+            setDetailsAboutLanguage()
 
             activity?.speedDial?.visibility = View.GONE
             galleryNav.setOnClickListener { navigateToGallery() }
@@ -122,31 +173,51 @@ class LanguageDetailsFragment : Fragment() {
         return binding.root
     }
 
+    private fun setDetailsAboutLanguage() {
+
+        languageDetailsViewModel.languageDetails(args.languagesId)
+            .observe(viewLifecycleOwner, Observer { languages ->
+                Glide.with(requireContext())
+                    .load(languages.imageUrl)
+                    .placeholder(R.color.sunflower_gray_50)
+                    //.error(R.drawable.ic_detail_share)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(detail_image)
+
+                language_detail_name.text = "" + languages.name
+                language_created_by.text = "" + languages.createdBy
+                language_created_at.text = "" + languages.createdAt
+                language_description.text = "" + languages.description
+            })
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_language_details, menu)
     }
 
     private fun navigateToGallery() {
-        languageDetailsViewModel.languageDetails.value?.let { language ->
-            val direction =
-                LanguageDetailsFragmentDirections.actionLanguageDetailFragmentToGalleryFragment(
-                    language.name
-                )
-            findNavController().navigate(direction)
-        }
+        languageDetailsViewModel.languageDetails(args.languagesId)
+            .observe(viewLifecycleOwner, Observer { languages ->
+                val direction =
+                    LanguageDetailsFragmentDirections.actionLanguageDetailFragmentToGalleryFragment(
+                        languages.name ?: ""
+                    )
+                findNavController().navigate(direction)
+            })
     }
 
     // Helper function for calling a share functionality.
     // Should be used when user presses a share button/menu item.
     @Suppress("DEPRECATION")
     private fun createShareIntent() {
-        val shareText = languageDetailsViewModel.languageDetails.value.let { plant ->
-            if (plant == null) {
-                ""
-            } else {
-                getString(R.string.share_text_language_details, plant.name)
+        val shareText =
+            languageDetailsViewModel.languageDetails(args.languagesId).value.let { languages ->
+                if (languages == null) {
+                    ""
+                } else {
+                    getString(R.string.share_text_language_details, languages.name)
+                }
             }
-        }
         val shareIntent = ShareCompat.IntentBuilder.from(requireActivity())
             .setText(shareText)
             .setType("text/plain")
@@ -166,7 +237,8 @@ class LanguageDetailsFragment : Fragment() {
         fab.hide()
     }
 
-    fun interface Callback {
-        fun add(plant: Languages?)
+    fun
+    interface Callback {
+        fun add(language: Languages?)
     }
 }

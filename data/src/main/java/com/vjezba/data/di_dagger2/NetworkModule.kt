@@ -16,12 +16,15 @@
 
 package com.vjezba.data.di
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.vjezba.data.BuildConfig
 import com.vjezba.data.networking.GithubRepositoryApi
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -34,12 +37,24 @@ private const val BASE_URL = "https://api.github.com/"
 @Module
 class NetworkModule {
 
+
+    @Provides
+    fun provideLoggingInterceptor() =
+        HttpLoggingInterceptor().apply { level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE }
+
     @Provides
     @Singleton
-    fun provideAuthInterceptorOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
+    fun provideAuthInterceptorOkHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient {
+        return OkHttpClient.Builder().addInterceptor(interceptor)
+            .addNetworkInterceptor(StethoInterceptor())
             .build()
     }
+
+
+    @Provides
+    @Singleton
+    fun provideGsonConverterFactory(gson: Gson): GsonConverterFactory =
+        GsonConverterFactory.create(gson)
 
     @Singleton
     @Provides
@@ -50,11 +65,11 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(gson:  Gson, client: OkHttpClient): Retrofit.Builder {
+    fun provideRetrofit(converterFactory: GsonConverterFactory, client: OkHttpClient): Retrofit.Builder {
         return Retrofit.Builder()
             .client(client)
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(converterFactory)
     }
 
     @Singleton

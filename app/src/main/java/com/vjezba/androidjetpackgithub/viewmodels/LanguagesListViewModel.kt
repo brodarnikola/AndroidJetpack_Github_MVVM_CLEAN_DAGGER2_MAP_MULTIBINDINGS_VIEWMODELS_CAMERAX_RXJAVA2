@@ -18,15 +18,16 @@ package com.vjezba.androidjetpackgithub.viewmodels
 
 import androidx.lifecycle.*
 import com.vjezba.domain.repository.LanguagesRepository
+import javax.inject.Inject
 
 /**
  * The ViewModel for [SavedLanguagesFragment].
  */
-class LanguagesListViewModel internal constructor(
-    private val savedStateHandle: SavedStateHandle,
+class LanguagesListViewModel @Inject internal constructor(
     languagesRepository: LanguagesRepository
 ) : ViewModel() {
 
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
     val languages  = getSavedOnlyMobilProgrammingLanguages().switchMap {
         if (it == NO_MOBILE_PROGRAMMING_LANGUAGE_FILTER) {
             //val d =languagesRepository.getLanguages()

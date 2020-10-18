@@ -22,8 +22,9 @@ import androidx.paging.cachedIn
 import com.vjezba.domain.model.RepositoryDetailsResponse
 import com.vjezba.domain.repository.GithubRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class GalleryViewModel internal constructor(
+class GalleryViewModel @Inject internal constructor(
     private val repository: GithubRepository
 ) : ViewModel() {
 

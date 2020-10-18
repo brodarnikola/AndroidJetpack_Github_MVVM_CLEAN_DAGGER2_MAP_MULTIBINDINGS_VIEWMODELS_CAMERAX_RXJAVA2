@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.databinding.FragmentPaggingNetworkAndDbDataBinding
+import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.adapters.languagerepos.ReposAdapter
@@ -33,16 +34,13 @@ import java.io.InvalidObjectException
 import javax.inject.Inject
 
 
-@ExperimentalCoroutinesApi
-class PaggingWithNetworkAndDbDataFragment : Fragment(), Injectable {
-
+class RepositoriesFragment : Fragment(), Injectable {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: PaggingWithNetworkAndDbDataViewModel
 
     //private val viewModel : PaggingWithNetworkAndDbDataViewModel by viewModel()
-    private val args: PaggingWithNetworkAndDbDataFragmentArgs by navArgs()
 
     private val adapter = ReposAdapter()
 
@@ -59,10 +57,10 @@ class PaggingWithNetworkAndDbDataFragment : Fragment(), Injectable {
 
         viewModel = injectViewModel(viewModelFactory)
 
-        val binding = FragmentPaggingNetworkAndDbDataBinding.inflate(inflater, container, false)
+        val binding = FragmentRepositoriesBinding.inflate(inflater, container, false)
         context ?: return binding.root
 
-        activity?.toolbar?.title = getString(R.string.gallery_title) + ": " + args.languageName
+        activity?.toolbar?.title = getString(R.string.gallery_title)
         activity?.speedDial?.visibility = View.GONE
 
         progressBarRepos = binding.progressBarRepositories
@@ -110,7 +108,7 @@ class PaggingWithNetworkAndDbDataFragment : Fragment(), Injectable {
 
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
-            viewModel.searchRepo(args.languageName).collectLatest {
+            viewModel.searchRepo("java").collectLatest {
                 adapter.submitData(it)
             }
         }

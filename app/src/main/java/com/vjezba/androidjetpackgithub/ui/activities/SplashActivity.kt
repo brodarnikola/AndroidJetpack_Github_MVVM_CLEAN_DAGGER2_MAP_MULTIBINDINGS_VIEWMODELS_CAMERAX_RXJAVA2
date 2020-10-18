@@ -8,7 +8,6 @@ import com.vjezba.androidjetpackgithub.R
 import com.vjezba.domain.repository.UserManager
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
-import org.koin.android.ext.android.inject
 import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity(), HasActivityInjector {

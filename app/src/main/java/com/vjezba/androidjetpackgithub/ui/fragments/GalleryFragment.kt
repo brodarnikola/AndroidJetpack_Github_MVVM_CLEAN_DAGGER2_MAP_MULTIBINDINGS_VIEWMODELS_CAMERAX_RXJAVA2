@@ -25,6 +25,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
@@ -32,14 +33,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.ui.adapters.GalleryAdapter
 import com.vjezba.androidjetpackgithub.databinding.FragmentGalleryBinding
+import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.viewmodels.GalleryViewModel
+import com.vjezba.androidjetpackgithub.viewmodels.LanguageDetailsViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
-class GalleryFragment : Fragment() {
+class GalleryFragment : Fragment(), Injectable {
 
     private var progressBarRepos: ProgressBar? = null
     private var languageListRepository: RecyclerView? = null
@@ -49,13 +53,21 @@ class GalleryFragment : Fragment() {
     private val args: GalleryFragmentArgs by navArgs()
     private var searchJob: Job? = null
 
-    private val viewModel : GalleryViewModel by viewModel()
+    //private val viewModel : GalleryViewModel by viewModel()
+
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: GalleryViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        viewModel = injectViewModel(viewModelFactory)
+
         val binding = FragmentGalleryBinding.inflate(inflater, container, false)
         context ?: return binding.root
 

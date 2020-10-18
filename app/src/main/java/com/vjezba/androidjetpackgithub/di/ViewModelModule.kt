@@ -28,25 +28,46 @@ abstract class ViewModelModule {
     abstract fun bindEnterDetailsViewModel(viewModel: EnterDetailsViewModel): ViewModel
 
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(LanguagesActivityViewModel::class)
+    abstract fun bindLanguagesActivityViewModel(viewModel: LanguagesActivityViewModel): ViewModel
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SavedLanguagesListViewModel::class)
+    abstract fun bindSavedLanguagesViewModel(viewModel: SavedLanguagesListViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LanguagesListViewModel::class)
+    abstract fun bindLanguagesListViewModel(viewModel: LanguagesListViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LanguageDetailsViewModel::class)
+    abstract fun bindLanguageDetaislViewModel(viewModel: LanguageDetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GalleryViewModel::class)
+    abstract fun bindGalleryViewModel(viewModel: GalleryViewModel): ViewModel
 
 
 
 
     @Binds
     @IntoMap
-    @ViewModelKey(LegoThemeViewModel::class)
-    abstract fun bindThemeViewModel(viewModel: LegoThemeViewModel): ViewModel
-
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(LegoSetsViewModel::class)
-    abstract fun bindLegoSetsViewModel(viewModel: LegoSetsViewModel): ViewModel
+    @ViewModelKey(PaggingWithNetworkAndDbViewModel::class)
+    abstract fun bindPaggingWithNetworkAndDbViewModel(viewModel: PaggingWithNetworkAndDbViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(LegoSetViewModel::class)
-    abstract fun bindLegoSetViewModel(viewModel: LegoSetViewModel): ViewModel
+    @ViewModelKey(PaggingWithNetworkAndDbDataViewModel::class)
+    abstract fun bindPaggingWithNetworkAndDbDataViewModel(viewModel: PaggingWithNetworkAndDbDataViewModel): ViewModel
+
+
 
     @Binds
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

@@ -21,21 +21,28 @@ import android.view.*
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.databinding.FragmentLanguagesBinding
+import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.adapters.LanguagesAdapter
 import com.vjezba.androidjetpackgithub.viewmodels.LanguagesListViewModel
-import org.koin.androidx.viewmodel.ext.android.getStateViewModel
+import javax.inject.Inject
 
-class LanguagesFragment : Fragment() {
+class LanguagesFragment : Fragment(), Injectable {
 
     //private val viewModel: LanguagesListViewModel by viewModel()
-   private val viewModel by lazy {
-        getStateViewModel<LanguagesListViewModel>()
-    }
+//   private val viewModel by lazy {
+//        getStateViewModel<LanguagesListViewModel>()
+//    }
    /* private val viewModel: LanguagesListViewModel by viewModels {
         InjectorUtils.provideLanguagesListViewModelFactory(this)
     }*/
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: LanguagesListViewModel
 
     var menuItemFinal: MenuItem? = null
 
@@ -44,6 +51,9 @@ class LanguagesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        viewModel = injectViewModel(viewModelFactory)
+
         val binding = FragmentLanguagesBinding.inflate(inflater, container, false)
         context ?: return binding.root
 

@@ -9,12 +9,9 @@ import androidx.fragment.app.Fragment
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.ui.activities.RegistrationActivity
 import com.vjezba.androidjetpackgithub.viewmodels.RegistrationViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class TermsAndConditionsFragment : Fragment() {
-
-    //private val registrationViewModel : RegistrationViewModel by viewModel()
 
     private var registrationViewModel : RegistrationViewModel? = null
 

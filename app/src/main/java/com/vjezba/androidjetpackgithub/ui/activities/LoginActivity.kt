@@ -6,23 +6,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.vjezba.androidjetpackgithub.R
-import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.injectViewModel
-import com.vjezba.androidjetpackgithub.viewmodels.GalleryViewModel
-import com.vjezba.androidjetpackgithub.viewmodels.LegoThemeViewModel
 import com.vjezba.androidjetpackgithub.viewmodels.LoginViewModel
-import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
-import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_login.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import javax.inject.Inject
-import kotlin.error
 
 class LoginActivity : AppCompatActivity(), HasActivityInjector {
 

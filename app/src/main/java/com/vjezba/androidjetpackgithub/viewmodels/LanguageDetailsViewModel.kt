@@ -16,26 +16,41 @@
 
 package com.vjezba.androidjetpackgithub.viewmodels
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vjezba.androidjetpackgithub.BuildConfig
+import com.vjezba.domain.model.Languages
 import com.vjezba.domain.repository.LanguagesRepository
 import com.vjezba.domain.repository.SavedLanguagesRepository
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * The ViewModel used in [LanguageDetailFragment].
  */
-class LanguageDetailsViewModel(
-    languageRepository: LanguagesRepository,
-    private val savedLanguagesRepository: SavedLanguagesRepository,
-    private val languagesId: Int
+class LanguageDetailsViewModel @Inject constructor(
+    private val languageRepository: LanguagesRepository,
+    private val savedLanguagesRepository: SavedLanguagesRepository
+//    private val languagesId: Int
 ) : ViewModel() {
 
-    val isSavedLanguage = savedLanguagesRepository.isLanguageSaved(languagesId)
-    val languageDetails = languageRepository.getLanguage(languagesId)
+    //val isSavedLanguage = savedLanguagesRepository.isLanguageSaved(languagesId)
+    //val languageDetails = languageRepository.getLanguage(languagesId)
 
-    fun saveProgrammingLanguage() {
+    fun isLanguageSaved(languagesId: Int) : LiveData<Boolean> {
+        return savedLanguagesRepository.isLanguageSaved(languagesId)
+    }
+
+    fun languageDetails(languagesId: Int) : LiveData<Languages> {
+        return languageRepository.getLanguage(languagesId)
+    }
+
+    fun getLanguageDetails(languagesId: Int) : Languages? {
+        return languageRepository.getLanguage(languagesId).value ?: Languages(1, "", "", "", 0, "", "")
+    }
+
+    fun saveProgrammingLanguage(languagesId: Int) {
         viewModelScope.launch {
             savedLanguagesRepository.createSavedLanguage(languagesId)
         }

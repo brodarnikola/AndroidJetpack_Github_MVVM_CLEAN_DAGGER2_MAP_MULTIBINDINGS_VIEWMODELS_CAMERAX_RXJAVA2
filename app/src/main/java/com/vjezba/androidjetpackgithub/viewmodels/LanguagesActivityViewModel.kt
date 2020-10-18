@@ -20,9 +20,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vjezba.domain.repository.SavedLanguagesRepository
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class LanguagesActivityViewModel constructor(
+class LanguagesActivityViewModel @Inject constructor(
     val savedLanguages: SavedLanguagesRepository
 ) : ViewModel() {
 
