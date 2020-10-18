@@ -28,6 +28,11 @@ abstract class ViewModelModule {
     abstract fun bindEnterDetailsViewModel(viewModel: EnterDetailsViewModel): ViewModel
 
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(LanguagesActivityViewModel::class)
+    abstract fun bindLanguagesActivityViewModel(viewModel: LanguagesActivityViewModel): ViewModel
+
 
     @Binds
     @IntoMap
@@ -54,19 +59,15 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(LegoThemeViewModel::class)
-    abstract fun bindThemeViewModel(viewModel: LegoThemeViewModel): ViewModel
-
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(LegoSetsViewModel::class)
-    abstract fun bindLegoSetsViewModel(viewModel: LegoSetsViewModel): ViewModel
+    @ViewModelKey(PaggingWithNetworkAndDbViewModel::class)
+    abstract fun bindPaggingWithNetworkAndDbViewModel(viewModel: PaggingWithNetworkAndDbViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ViewModelKey(LegoSetViewModel::class)
-    abstract fun bindLegoSetViewModel(viewModel: LegoSetViewModel): ViewModel
+    @ViewModelKey(PaggingWithNetworkAndDbDataViewModel::class)
+    abstract fun bindPaggingWithNetworkAndDbDataViewModel(viewModel: PaggingWithNetworkAndDbDataViewModel): ViewModel
+
+
 
     @Binds
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

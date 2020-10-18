@@ -1,8 +1,8 @@
 package com.vjezba.androidjetpackgithub.ui.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -21,50 +22,52 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.leinardi.android.speeddial.SpeedDialView
 import com.vjezba.androidjetpackgithub.R
+import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.fragments.HomeViewPagerFragmentDirections
 import com.vjezba.androidjetpackgithub.viewmodels.LanguagesActivityViewModel
 import com.vjezba.domain.repository.UserManager
 import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasActivityInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_languages.*
-import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import javax.inject.Inject
 
 
-class LanguagesActivity : AppCompatActivity(), HasSupportFragmentInjector {
+class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFragmentInjector {
+
+    @Inject
+    lateinit var dispatchingAndroidActivityInjector: DispatchingAndroidInjector<Activity>
+
+    override fun activityInjector() = dispatchingAndroidActivityInjector
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
 
-    val userManager: UserManager by inject()
+    override fun supportFragmentInjector() = dispatchingAndroidInjector
+
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var languagesActivityViewModel: LanguagesActivityViewModel
+
+    @Inject
+    lateinit var userManager: UserManager
+
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
     lateinit var drawerLayout: DrawerLayout
 
-    override fun supportFragmentInjector() = dispatchingAndroidInjector
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_languages)
+
+        languagesActivityViewModel = injectViewModel(viewModelFactory)
+
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        nav_view.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.lego_fragment -> {
-                    val intent = Intent(this, LegoThemeActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
-            }
-            true
-        }
 
         val drawerToggle = ActionBarDrawerToggle(
             this, drawer_layout,
@@ -105,7 +108,6 @@ class LanguagesActivity : AppCompatActivity(), HasSupportFragmentInjector {
         val logout = nav_view?.getHeaderView(0)?.findViewById<ImageView>(R.id.ivLogout)
         logout?.setOnClickListener {
             lifecycleScope.launch(Dispatchers.IO) {
-                val languagesActivityViewModel: LanguagesActivityViewModel by viewModel()
                 languagesActivityViewModel.deleteAllSavedProgrammingLanguagesOfUser()
                 userManager.logout()
                 withContext(Dispatchers.Main) {
@@ -125,12 +127,6 @@ class LanguagesActivity : AppCompatActivity(), HasSupportFragmentInjector {
                 R.id.action_slideshow_fragment -> {
                     val direction =
                         HomeViewPagerFragmentDirections.actionViewPagerFragmentToSlideshowFragment()
-                    navController.navigate(direction)
-                    false // true to keep the Speed Dial open
-                }
-                R.id.action_dance -> {
-                    val direction =
-                        HomeViewPagerFragmentDirections.actionViewPagerFragmentToLegoThemeFragment()
                     navController.navigate(direction)
                     false // true to keep the Speed Dial open
                 }

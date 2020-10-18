@@ -9,8 +9,9 @@ import androidx.paging.map
 import com.vjezba.domain.model.RepositoryDetailsResponse
 import com.vjezba.domain.repository.GithubRepository
 import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
-class PaggingWithNetworkAndDbDataViewModel(
+class PaggingWithNetworkAndDbDataViewModel @Inject constructor(
     private val repository: GithubRepository
 ) : ViewModel() {
 

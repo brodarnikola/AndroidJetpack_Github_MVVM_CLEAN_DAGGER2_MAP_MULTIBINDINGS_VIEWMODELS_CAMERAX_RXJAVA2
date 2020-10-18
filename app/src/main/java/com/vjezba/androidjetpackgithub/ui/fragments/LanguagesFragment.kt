@@ -28,8 +28,6 @@ import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.adapters.LanguagesAdapter
 import com.vjezba.androidjetpackgithub.viewmodels.LanguagesListViewModel
-import com.vjezba.androidjetpackgithub.viewmodels.SavedLanguagesListViewModel
-import org.koin.androidx.viewmodel.ext.android.getStateViewModel
 import javax.inject.Inject
 
 class LanguagesFragment : Fragment(), Injectable {

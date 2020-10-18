@@ -8,6 +8,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
@@ -15,26 +16,32 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.databinding.FragmentPaggingNetworkAndDbDataBinding
+import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.adapters.languagerepos.ReposAdapter
 import com.vjezba.androidjetpackgithub.ui.adapters.languagerepos.ReposLoadStateAdapter
 import com.vjezba.androidjetpackgithub.viewmodels.PaggingWithNetworkAndDbDataViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlinx.coroutines.launch
 import java.io.InvalidObjectException
+import javax.inject.Inject
 
 
 @ExperimentalCoroutinesApi
-class PaggingWithNetworkAndDbDataFragment : Fragment() {
+class PaggingWithNetworkAndDbDataFragment : Fragment(), Injectable {
 
-    private val viewModel : PaggingWithNetworkAndDbDataViewModel by viewModel()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: PaggingWithNetworkAndDbDataViewModel
+
+    //private val viewModel : PaggingWithNetworkAndDbDataViewModel by viewModel()
     private val args: PaggingWithNetworkAndDbDataFragmentArgs by navArgs()
 
     private val adapter = ReposAdapter()
@@ -49,6 +56,8 @@ class PaggingWithNetworkAndDbDataFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        viewModel = injectViewModel(viewModelFactory)
 
         val binding = FragmentPaggingNetworkAndDbDataBinding.inflate(inflater, container, false)
         context ?: return binding.root

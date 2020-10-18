@@ -41,7 +41,6 @@ import kotlinx.android.synthetic.main.activity_languages_main.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import javax.inject.Inject
 
 class GalleryFragment : Fragment(), Injectable {

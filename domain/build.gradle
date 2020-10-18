@@ -35,8 +35,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    //    Koin
-    implementation "org.koin:koin-android:$koinVersion"
 
     // PAGING
     implementation "androidx.paging:paging-runtime:$pagingVersion"

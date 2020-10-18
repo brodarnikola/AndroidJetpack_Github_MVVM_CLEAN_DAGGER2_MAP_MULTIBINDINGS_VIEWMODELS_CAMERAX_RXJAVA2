@@ -10,8 +10,6 @@ buildscript {
         minSdkVersion = 21
         targetSdkVersion = 30
 
-        koinVersion = KOIN_VERSION
-
         // App dependencies
         appCompatVersion = '1.1.0'
         constraintLayoutVersion = '2.0.0-beta3'

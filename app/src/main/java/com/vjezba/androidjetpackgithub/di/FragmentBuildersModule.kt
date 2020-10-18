@@ -9,15 +9,6 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class FragmentBuildersModule {
 
-    @ContributesAndroidInjector
-    abstract fun contributeThemeFragment(): LegoThemeFragment
-
-    @ContributesAndroidInjector
-    abstract fun contributeLegoSetsFragment(): LegoSetsFragment
-
-    @ContributesAndroidInjector
-    abstract fun contributeLegoSetFragment(): LegoSetFragment
-
 
 
 
@@ -38,6 +29,14 @@ abstract class FragmentBuildersModule {
 
     @ContributesAndroidInjector
     abstract fun contributeGalleryFragment(): GalleryFragment
+
+
+    @ContributesAndroidInjector
+    abstract fun contributePaggingWithNetworkAndDatabaseFragment(): PaggingWithNetworkAndDbFragment
+
+
+    @ContributesAndroidInjector
+    abstract fun contributePaggingWithNetworkAndDatabaseDataFragment(): PaggingWithNetworkAndDbDataFragment
 
 
 

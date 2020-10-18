@@ -6,11 +6,6 @@
         android:title="Pagging DB and Network" />
 
     <item
-        android:id="@+id/action_dance"
-        android:icon="@drawable/ic_dance_24dp"
-        android:title="Dagger2 Lego Example" />
-
-    <item
         android:id="@+id/action_dogo"
         android:icon="@drawable/ic_doggo_24dp"
         android:title="Doggo" />

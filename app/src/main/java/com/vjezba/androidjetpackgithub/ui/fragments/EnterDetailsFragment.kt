@@ -16,7 +16,6 @@
 
 package com.vjezba.androidjetpackgithub.ui.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,11 +32,7 @@ import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.activities.RegistrationActivity
 import com.vjezba.androidjetpackgithub.viewmodels.EnterDetailsViewModel
-import com.vjezba.androidjetpackgithub.viewmodels.LegoThemeViewModel
 import com.vjezba.androidjetpackgithub.viewmodels.RegistrationViewModel
-import com.vjezba.domain.repository.UserManager
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import javax.inject.Inject
 
 class EnterDetailsFragment : Fragment(), Injectable {
