@@ -38,4 +38,14 @@ class GalleryRepositoriesViewModel @Inject internal constructor(
         currentSearchResult = newResult
         return newResult
     }
+
+    fun searchGithubRepositoryByLastUpdateTime(queryString: String): Flow<PagingData<RepositoryDetailsResponse>> {
+        currentQueryValue = queryString
+        val newResult: Flow<PagingData<RepositoryDetailsResponse>> =
+            repository.searchGithubRepositoryByLastUpdateTime(queryString).cachedIn(viewModelScope)
+        currentSearchResult = newResult
+        return newResult
+    }
+
+
 }

@@ -17,11 +17,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.adapters.GalleryAdapter
+import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesAdapter
 import com.vjezba.androidjetpackgithub.viewmodels.GalleryRepositoriesViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
 import kotlinx.android.synthetic.main.fragment_repositories.*
@@ -39,8 +41,7 @@ class RepositoriesFragment : Fragment(), Injectable {
     private var btnFind: Button? = null
     private var etInserText: EditText? = null
 
-    private val adapter =
-        GalleryAdapter()
+    private val adapter = RepositoriesAdapter()
     private var searchJob: Job? = null
 
     @Inject
@@ -118,27 +119,39 @@ class RepositoriesFragment : Fragment(), Injectable {
 
     private fun search() {
         btnFind?.setOnClickListener {
-            // Make sure we cancel the previous job before creating a new one
-            if( currentSearchText == lastCurrentSearchText ) {
-                searchJob?.cancel()
-                searchJob = lifecycleScope.launch {
-                    repositoriesViewModel.searchGithubRepositoryByProgrammingLanguage(currentSearchText)
-                        .collectLatest {
-                            adapter.submitData(it)
-                        }
+            if( currentSearchText != "" ) {
+                // Make sure we cancel the previous job before creating a new one
+                if (currentSearchText == lastCurrentSearchText) {
+                    searchJob?.cancel()
+                    searchJob = lifecycleScope.launch {
+                        repositoriesViewModel.searchGithubRepositoryByLastUpdateTime(
+                            currentSearchText
+                        )
+                            .collectLatest {
+                                adapter.submitData(it)
+                            }
+                    }
+                } else {
+                    lastCurrentSearchText = currentSearchText
+                    adapter.notifyItemRangeRemoved(0, adapter.itemCount)
+                    searchJob?.cancel()
+                    searchJob = lifecycleScope.launch {
+                        delay(1000)
+                        repositoriesViewModel.searchGithubRepositoryByLastUpdateTime(
+                            currentSearchText
+                        )
+                            .collectLatest {
+                                adapter.submitData(it)
+                            }
+                    }
                 }
             }
             else {
-                lastCurrentSearchText = currentSearchText
-                adapter.notifyItemRangeRemoved(0, adapter.itemCount)
-                searchJob?.cancel()
-                searchJob = lifecycleScope.launch {
-                    delay(1000)
-                    repositoriesViewModel.searchGithubRepositoryByProgrammingLanguage(currentSearchText)
-                        .collectLatest {
-                            adapter.submitData(it)
-                        }
-                }
+                Snackbar.make(
+                    this@RepositoriesFragment.requireView(),
+                    "You did not insert any text to search repositories.",
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         }
     }

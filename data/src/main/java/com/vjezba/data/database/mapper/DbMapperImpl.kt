@@ -96,7 +96,11 @@ class DbMapperImpl : DbMapper {
                     RepositoryOwnerResponse(ownerApi.avatarUrl),
                     name,
                     description,
-                    html_url
+                    html_url,
+                    language,
+                    it.stars,
+                    forks,
+                    lastUpdateTime
                 )
             }
         }

@@ -9,5 +9,6 @@ data class RepositoryDetailsResponse(
     val html_url: String? = "",
     val language: String? = "",
     val starts: Int = 0,
-    val forks: Int? = 0
+    val forks: Int? = 0,
+    val lastUpdateTime: String? = ""
 )
