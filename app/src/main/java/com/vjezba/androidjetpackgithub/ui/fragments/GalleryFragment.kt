@@ -24,7 +24,6 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -36,7 +35,6 @@ import com.vjezba.androidjetpackgithub.databinding.FragmentGalleryBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.viewmodels.GalleryViewModel
-import com.vjezba.androidjetpackgithub.viewmodels.LanguageDetailsViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
