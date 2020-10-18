@@ -10,12 +10,8 @@ import dagger.android.ContributesAndroidInjector
 abstract class FragmentBuildersModule {
 
 
-
-
     @ContributesAndroidInjector
     abstract fun contributeEnterDetailsFragment(): EnterDetailsFragment
-
-
 
 
     @ContributesAndroidInjector
@@ -39,5 +35,7 @@ abstract class FragmentBuildersModule {
     abstract fun contributePaggingWithNetworkAndDatabaseDataFragment(): PaggingWithNetworkAndDbDataFragment
 
 
+    @ContributesAndroidInjector
+    abstract fun contributeRepositorySearchFragment(): RepositoriesFragment
 
 }

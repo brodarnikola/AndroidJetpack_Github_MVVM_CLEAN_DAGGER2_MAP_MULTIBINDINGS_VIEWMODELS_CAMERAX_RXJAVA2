@@ -86,7 +86,7 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
             setOf(
                 R.id.view_pager_fragment,
                 R.id.paggin_with_network_and_db,
-                R.id.lego_fragment
+                R.id.repository_fragment
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

@@ -12,5 +12,9 @@
             android:id="@+id/paggin_with_network_and_db"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/menu_numbers" />
+        <item
+            android:id="@+id/repository_fragment"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/menu_repositories_search_fragment" />
     </group>
 </menu>
