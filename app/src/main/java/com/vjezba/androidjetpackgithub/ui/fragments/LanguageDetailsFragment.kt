@@ -24,7 +24,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -39,9 +38,6 @@ import com.vjezba.androidjetpackgithub.viewmodels.LanguageDetailsViewModel
 import com.vjezba.domain.model.Languages
 import kotlinx.android.synthetic.main.activity_languages_main.*
 import kotlinx.android.synthetic.main.fragment_language_details.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -185,8 +181,8 @@ class LanguageDetailsFragment : Fragment(), Injectable {
                     .into(detail_image)
 
                 language_detail_name.text = "" + languages.name
-                language_created_by.text = "" + languages.createdBy
-                language_created_at.text = "" + languages.createdAt
+                repository_name.text = "" + languages.createdBy
+                last_update_time.text = "" + languages.createdAt
                 language_description.text = "" + languages.description
             })
     }

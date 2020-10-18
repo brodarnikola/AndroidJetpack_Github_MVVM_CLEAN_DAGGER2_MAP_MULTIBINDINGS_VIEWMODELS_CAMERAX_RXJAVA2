@@ -23,7 +23,7 @@
             name="clickListener"
             type="android.view.View.OnClickListener"/>
         <variable
-            name="photo"
+            name="repo"
             type="com.vjezba.domain.model.RepositoryDetailsResponse"/>
     </data>
 
