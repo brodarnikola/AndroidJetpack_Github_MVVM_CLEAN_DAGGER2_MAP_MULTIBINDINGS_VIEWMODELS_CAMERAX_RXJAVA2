@@ -22,16 +22,6 @@ class App : Application(), HasActivityInjector {
     super.onCreate()
     instance = this
 
-//    val appModules = listOf(presentationModule)
-//    val interactionModules = listOf(interactionModule)
-//    val dataModules = listOf( networkingModule, repositoryModule, databaseModule)
-//
-//    startKoin {
-//      androidContext(this@App)
-//      if (BuildConfig.DEBUG) androidLogger(Level.ERROR)
-//      modules(appModules + interactionModules + dataModules)
-//    }
-
     AppInjector.init(this)
 
   }
