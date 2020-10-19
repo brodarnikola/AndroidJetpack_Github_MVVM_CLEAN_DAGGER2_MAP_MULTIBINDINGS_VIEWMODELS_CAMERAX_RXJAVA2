@@ -34,9 +34,7 @@ import kotlinx.android.synthetic.main.activity_languages_main.*
 import kotlinx.android.synthetic.main.fragment_repositories_details.*
 import javax.inject.Inject
 
-/**
- * A fragments representing a single Plant detail screen.
- */
+
 class RepositoriesDetailsFragment : Fragment() {
 
     private val args: RepositoriesDetailsFragmentArgs by navArgs()

@@ -62,18 +62,20 @@ class RepositoriesFragment : Fragment(), Injectable {
         val binding = FragmentRepositoriesBinding.inflate(inflater, container, false)
         context ?: return binding.root
 
-        progressBarRepos = binding.progressBarRepositories
-        languageListRepository = binding.languageListRepos
-        btnFind = binding.btnFind
-        etInserText = binding.etInsertText
-
-        binding.languageListRepos.adapter = adapter
-        search()
-        setEdittextListener()
-
         activity?.speedDial?.visibility = View.GONE
         activity?.toolbar?.title = getString(R.string.gallery_title)
 
+        initializeViews(binding)
+        search()
+        setEdittextListener()
+
+        setupAdapter(binding)
+
+        return binding.root
+    }
+
+    private fun setupAdapter(binding: FragmentRepositoriesBinding) {
+        binding.languageListRepos.adapter = adapter
         adapter.addLoadStateListener { loadState ->
             binding.languageListRepos.isVisible = loadState.source.refresh is LoadState.NotLoading
             // Show loading spinner during initial load or refresh.
@@ -94,12 +96,16 @@ class RepositoriesFragment : Fragment(), Injectable {
                 ).show()
             }
         }
+    }
 
-        return binding.root
+    private fun initializeViews(binding: FragmentRepositoriesBinding) {
+        progressBarRepos = binding.progressBarRepositories
+        languageListRepository = binding.languageListRepos
+        btnFind = binding.btnFind
+        etInserText = binding.etInsertText
     }
 
     private fun setEdittextListener() {
-
         etInserText?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(
