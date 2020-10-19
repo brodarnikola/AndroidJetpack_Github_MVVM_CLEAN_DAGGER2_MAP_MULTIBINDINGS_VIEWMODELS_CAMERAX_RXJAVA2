@@ -21,4 +21,8 @@ abstract class MainActivityModule {
     @ContributesAndroidInjector()
     abstract fun contributeSplashActivity(): SplashActivity
 
+
+    @ContributesAndroidInjector()
+    abstract fun contributeRepositoriesActivity(): RepositoriesActivity
+
 }

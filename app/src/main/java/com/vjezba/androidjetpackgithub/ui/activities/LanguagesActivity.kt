@@ -3,6 +3,7 @@ package com.vjezba.androidjetpackgithub.ui.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -11,10 +12,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -23,6 +26,7 @@ import com.google.android.material.navigation.NavigationView
 import com.leinardi.android.speeddial.SpeedDialView
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.di.injectViewModel
+import com.vjezba.androidjetpackgithub.ui.fragments.HomeViewPagerFragment
 import com.vjezba.androidjetpackgithub.ui.fragments.HomeViewPagerFragmentDirections
 import com.vjezba.androidjetpackgithub.viewmodels.LanguagesActivityViewModel
 import com.vjezba.domain.repository.UserManager
@@ -36,7 +40,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
-class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFragmentInjector {
+class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFragmentInjector, NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
     lateinit var dispatchingAndroidActivityInjector: DispatchingAndroidInjector<Activity>
@@ -91,6 +95,41 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        nav_view!!.setNavigationItemSelectedListener(this)
+    }
+
+    /**
+     * Called when an item in the navigation menu is selected.
+     *
+     * @param item The selected item
+     * @return true to display the item as the selected item
+     */
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        //to prevent current item select over and over
+
+        //to prevent current item select over and over
+        if (item.isChecked) {
+            drawer_layout?.closeDrawer(GravityCompat.START)
+            return false
+        }
+
+
+        if( id == R.id.view_pager_fragment ) {
+            navController.popBackStack()
+        }
+        else if( id == R.id.paggin_with_network_and_db ) {
+            val direction = HomeViewPagerFragmentDirections.actionViewPagerFragmentToSlideshowFragment()
+            navController.navigate(direction)
+        }
+        else if (id == R.id.repository_fragment) {
+            startActivity(Intent(applicationContext, RepositoriesActivity::class.java))
+            finish()
+        }
+        drawer_layout?.closeDrawer(GravityCompat.START)
+        return true
     }
 
     override fun onStart() {
