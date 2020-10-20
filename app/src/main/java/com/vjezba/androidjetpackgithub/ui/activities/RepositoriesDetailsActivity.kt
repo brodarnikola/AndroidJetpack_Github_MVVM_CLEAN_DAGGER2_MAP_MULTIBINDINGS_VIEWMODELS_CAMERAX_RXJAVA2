@@ -16,7 +16,9 @@
 
 package com.vjezba.androidjetpackgithub.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.vjezba.androidjetpackgithub.R
 import kotlinx.android.synthetic.main.activity_repositories_details.*
@@ -28,6 +30,9 @@ class RepositoriesDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repositories_details)
 
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         setDetailsAboutLanguage()
     }
 
@@ -36,9 +41,21 @@ class RepositoriesDetailsActivity : AppCompatActivity() {
         lastUpdateTimeValue?.text = "" + intent.getStringExtra("lastUpdateTime")
         ownerNameValue?.text = "" + intent.getStringExtra("ownerNameValue")
         if( intent.getStringExtra("repositoryDescription") != "null" )
-            repositoryDescription?.text = "" + intent.getStringExtra("repositoryDescription")
+            repositoryDescriptionValue?.text = "" + intent.getStringExtra("repositoryDescription")
         else
-            repositoryDescription?.text = "This repository does not have any description."
+            repositoryDescriptionValue?.text = "This repository does not have any description."
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            android.R.id.home -> {
+                startActivity(Intent(this, RepositoriesActivity::class.java))
+                finish()
+                return true
+            }
+
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
 }

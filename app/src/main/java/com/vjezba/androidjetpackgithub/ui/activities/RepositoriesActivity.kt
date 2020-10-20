@@ -159,7 +159,7 @@ class RepositoriesActivity : AppCompatActivity(), HasActivityInjector, Injectabl
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
             android.R.id.home -> {
-                startActivity(Intent(applicationContext, LanguagesActivity::class.java))
+                startActivity(Intent(this, LanguagesActivity::class.java))
                 finish()
                 return true
             }
@@ -170,7 +170,7 @@ class RepositoriesActivity : AppCompatActivity(), HasActivityInjector, Injectabl
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivity(Intent(applicationContext, LanguagesActivity::class.java))
+        startActivity(Intent(this, LanguagesActivity::class.java))
         finish()
     }
 
