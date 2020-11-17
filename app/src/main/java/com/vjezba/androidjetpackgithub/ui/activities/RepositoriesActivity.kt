@@ -17,6 +17,7 @@ import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesAdapter
 import com.vjezba.androidjetpackgithub.viewmodels.GalleryRepositoriesViewModel
@@ -41,7 +42,7 @@ class RepositoriesActivity : AppCompatActivity(), HasActivityInjector, Injectabl
     private var searchJob: Job? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
     private lateinit var repositoriesViewModel: GalleryRepositoriesViewModel
 
     var currentSearchText: String = ""

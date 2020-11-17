@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.vjezba.androidjetpackgithub.databinding.FragmentPaggingNetworkAndDbBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.activities.LanguagesActivity
 import com.vjezba.androidjetpackgithub.ui.dialog.ChooseProgrammingLanguageDialog
@@ -28,7 +29,7 @@ private const val UPDATE_PERIOD = 10000L
 class PaggingWithNetworkAndDbFragment : Fragment(), Injectable {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: PaggingWithNetworkAndDbViewModel
 
     private var automaticIncreaseNumberByOne: Job? = null

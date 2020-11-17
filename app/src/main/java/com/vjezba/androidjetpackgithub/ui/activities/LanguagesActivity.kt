@@ -12,12 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -25,8 +23,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.leinardi.android.speeddial.SpeedDialView
 import com.vjezba.androidjetpackgithub.R
+import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
-import com.vjezba.androidjetpackgithub.ui.fragments.HomeViewPagerFragment
 import com.vjezba.androidjetpackgithub.ui.fragments.HomeViewPagerFragmentDirections
 import com.vjezba.androidjetpackgithub.viewmodels.LanguagesActivityViewModel
 import com.vjezba.domain.repository.UserManager
@@ -52,7 +50,7 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
 
     override fun supportFragmentInjector() = dispatchingAndroidInjector
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     lateinit var languagesActivityViewModel: LanguagesActivityViewModel
 
     @Inject

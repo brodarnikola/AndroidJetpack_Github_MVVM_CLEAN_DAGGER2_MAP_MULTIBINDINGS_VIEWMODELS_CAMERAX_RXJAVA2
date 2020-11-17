@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.databinding.FragmentLanguagesBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.adapters.LanguagesAdapter
 import com.vjezba.androidjetpackgithub.viewmodels.LanguagesListViewModel
@@ -41,7 +42,7 @@ class LanguagesFragment : Fragment(), Injectable {
     }*/
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: LanguagesListViewModel
 
     var menuItemFinal: MenuItem? = null

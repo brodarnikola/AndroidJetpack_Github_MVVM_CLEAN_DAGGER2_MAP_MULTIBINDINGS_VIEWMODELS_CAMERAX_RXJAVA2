@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.vjezba.androidjetpackgithub.R
+import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.fragments.EnterDetailsFragment
 import com.vjezba.androidjetpackgithub.ui.fragments.TermsAndConditionsFragment
@@ -28,10 +29,8 @@ class RegistrationActivity : AppCompatActivity(), HasActivityInjector, HasSuppor
 
     override fun activityInjector() = dispatchingAndroidInjector
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     lateinit var registrationViewModel: RegistrationViewModel
-
-    //val registrationViewModel : RegistrationViewModel = RegistrationViewModel( userManager )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -13,6 +13,7 @@ import com.vjezba.androidjetpackgithub.ui.adapters.ALL_GITHUBS
 import com.vjezba.androidjetpackgithub.ui.adapters.SavedLanguagesAdapter
 import com.vjezba.androidjetpackgithub.databinding.FragmentSavedLanguagesBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.viewmodels.SavedLanguagesListViewModel
 import javax.inject.Inject
@@ -28,7 +29,7 @@ class SavedLanguagesFragment : Fragment(), Injectable {
     private lateinit var binding: FragmentSavedLanguagesBinding
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: SavedLanguagesListViewModel
     //private val viewModel : SavedLanguagesListViewModel by viewModel()
 
