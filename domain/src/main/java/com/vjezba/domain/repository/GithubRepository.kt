@@ -18,6 +18,8 @@ package com.vjezba.domain.repository
 
 import androidx.paging.PagingData
 import com.vjezba.domain.model.RepositoryDetailsResponse
+import com.vjezba.domain.model.RepositoryResponse
+import io.reactivex.Flowable
 import kotlinx.coroutines.flow.Flow
 
 
@@ -30,4 +32,7 @@ interface GithubRepository {
 
 
     fun searchGithubRepositoryByLastUpdateTime(query: String) : Flow<PagingData<RepositoryDetailsResponse>>
+
+    // practice of rxjava2
+    fun getSearchRepositorieWithFlowableRxJava2(query: String) : Flowable<RepositoryResponse>
 }

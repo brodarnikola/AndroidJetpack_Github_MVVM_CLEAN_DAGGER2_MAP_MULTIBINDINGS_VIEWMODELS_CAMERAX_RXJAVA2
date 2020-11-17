@@ -35,6 +35,7 @@ import androidx.paging.map
 import com.vjezba.data.database.model.LanguagesRepoDb
 import com.vjezba.data.database.model.SavedAndAllLanguagesDb
 import com.vjezba.data.networking.model.RepositoryDetailsResponseApi
+import com.vjezba.data.networking.model.RepositoryResponseApi
 import com.vjezba.domain.model.*
 import kotlin.collections.map
 
@@ -137,6 +138,21 @@ class DbMapperImpl : DbMapper {
                     forks
                 )
             }
+        }
+    }
+
+    // example, practice of rxjava2
+    override fun mapApiResponseGithubToDomainGithuWithbRxJavaAndFlowable(responseApi: RepositoryResponseApi): RepositoryResponse {
+        return with(responseApi) {
+            RepositoryResponse(
+                total_count,
+                incomplete_results,
+                items.map {
+                    with(it) {
+                        RepositoryDetailsResponse( id, RepositoryOwnerResponse(it.ownerApi.avatarUrl), name, description, html_url, language, stars, forks )
+                    }
+                }
+            )
         }
     }
 

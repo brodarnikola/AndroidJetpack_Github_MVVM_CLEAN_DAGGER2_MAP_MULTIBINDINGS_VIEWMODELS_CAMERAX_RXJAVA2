@@ -36,8 +36,8 @@
             app:popExitAnim="@anim/slide_out_right" />
 
         <action
-            android:id="@+id/action_view_pager_fragment_to_repositories_fragment"
-            app:destination="@id/repository_fragment"
+            android:id="@+id/action_view_pager_fragment_to_rxjava2_examples_fragment"
+            app:destination="@id/rxjava2_example"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -100,9 +100,8 @@
             app:argType="string" />
     </fragment>
 
-
     <fragment
-        android:id="@+id/repository_fragment"
+        android:id="@+id/rxjava2_example"
         android:name="com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesFragment"
         android:label="@string/menu_repositories_search_fragment"
         tools:layout="@layout/fragment_repositories" >

@@ -5,6 +5,7 @@ import com.vjezba.data.database.model.LanguagesDb
 import com.vjezba.data.database.model.LanguagesRepoDb
 import com.vjezba.data.database.model.SavedAndAllLanguagesDb
 import com.vjezba.data.networking.model.RepositoryDetailsResponseApi
+import com.vjezba.data.networking.model.RepositoryResponseApi
 import com.vjezba.domain.model.*
 
 interface DbMapper {
@@ -23,5 +24,8 @@ interface DbMapper {
 
 
     fun mapPagingRepositoryDetailsResponseDbToPagingRepositoryDetailsResponse(responseApi: PagingData<LanguagesRepoDb>): PagingData<RepositoryDetailsResponse>
+
+    // example, practice of rxjava2
+    fun mapApiResponseGithubToDomainGithuWithbRxJavaAndFlowable(responseApi: RepositoryResponseApi): RepositoryResponse
 
 }

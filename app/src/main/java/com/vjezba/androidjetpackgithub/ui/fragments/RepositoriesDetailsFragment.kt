@@ -17,22 +17,14 @@
 package com.vjezba.androidjetpackgithub.ui.fragments
 
 import android.os.Bundle
-import android.view.*
-import android.widget.EditText
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.vjezba.androidjetpackgithub.R
-import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesBinding
 import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesDetailsBinding
-import com.vjezba.androidjetpackgithub.di.Injectable
-import com.vjezba.androidjetpackgithub.di.injectViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
-import kotlinx.android.synthetic.main.fragment_repositories_details.*
-import javax.inject.Inject
 
 
 class RepositoriesDetailsFragment : Fragment() {

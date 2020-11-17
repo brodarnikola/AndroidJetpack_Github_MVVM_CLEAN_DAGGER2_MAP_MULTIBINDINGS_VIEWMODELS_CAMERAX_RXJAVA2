@@ -11,10 +11,8 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -23,15 +21,10 @@ import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
-import com.vjezba.androidjetpackgithub.ui.adapters.GalleryAdapter
-import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesAdapter
+import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesFragmentAdapter
 import com.vjezba.androidjetpackgithub.viewmodels.GalleryRepositoriesViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
-import kotlinx.android.synthetic.main.fragment_repositories.*
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -42,8 +35,7 @@ class RepositoriesFragment : Fragment(), Injectable {
     private var btnFind: Button? = null
     private var etInserText: EditText? = null
 
-    private val adapter = RepositoriesAdapter()
-    private var searchJob: Job? = null
+    private val adapter = RepositoriesFragmentAdapter()
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -77,26 +69,6 @@ class RepositoriesFragment : Fragment(), Injectable {
 
     private fun setupAdapter(binding: FragmentRepositoriesBinding) {
         binding.languageListRepos.adapter = adapter
-        adapter.addLoadStateListener { loadState ->
-            binding.languageListRepos.isVisible = loadState.source.refresh is LoadState.NotLoading
-            // Show loading spinner during initial load or refresh.
-            binding.progressBarRepositories.isVisible = loadState.source.refresh is LoadState.Loading
-
-            binding.btnFind.isEnabled = loadState.source.refresh is LoadState.NotLoading
-
-            // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
-            val errorState = loadState.source.append as? LoadState.Error
-                ?: loadState.source.prepend as? LoadState.Error
-                ?: loadState.append as? LoadState.Error
-                ?: loadState.prepend as? LoadState.Error
-            errorState?.let {
-                Toast.makeText(
-                    requireContext(),
-                    "\uD83D\uDE28 Wooops ${it.error}",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
     }
 
     private fun initializeViews(binding: FragmentRepositoriesBinding) {
@@ -129,28 +101,19 @@ class RepositoriesFragment : Fragment(), Injectable {
             if( currentSearchText != "" ) {
                 // Make sure we cancel the previous job before creating a new one
                 if (currentSearchText == lastCurrentSearchText) {
-                    searchJob?.cancel()
-                    searchJob = lifecycleScope.launch {
-                        repositoriesViewModel.searchGithubRepositoryByLastUpdateTime(
-                            currentSearchText
-                        )
-                            .collectLatest {
-                                adapter.submitData(it)
-                            }
-                    }
+                    progressBarRepos?.visibility = View.VISIBLE
+                    repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithLiveData(currentSearchText).observe(viewLifecycleOwner, Observer { repos ->
+                        progressBarRepos?.visibility = View.GONE
+                        adapter.setRepos(repos.items.toMutableList())
+                    })
                 } else {
                     lastCurrentSearchText = currentSearchText
                     adapter.notifyItemRangeRemoved(0, adapter.itemCount)
-                    searchJob?.cancel()
-                    searchJob = lifecycleScope.launch {
-                        delay(1000)
-                        repositoriesViewModel.searchGithubRepositoryByLastUpdateTime(
-                            currentSearchText
-                        )
-                            .collectLatest {
-                                adapter.submitData(it)
-                            }
-                    }
+                    progressBarRepos?.visibility = View.VISIBLE
+                    repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithLiveData(currentSearchText).observe(viewLifecycleOwner, Observer { repos ->
+                        progressBarRepos?.visibility = View.GONE
+                        adapter.setRepos(repos.items.toMutableList())
+                    })
                 }
             }
             else {
@@ -162,4 +125,5 @@ class RepositoriesFragment : Fragment(), Injectable {
             }
         }
     }
+
 }

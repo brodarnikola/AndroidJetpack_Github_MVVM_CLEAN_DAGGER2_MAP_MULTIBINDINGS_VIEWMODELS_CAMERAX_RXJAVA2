@@ -17,6 +17,7 @@
 package com.vjezba.data.networking
 
 import com.vjezba.data.networking.model.RepositoryResponseApi
+import io.reactivex.Flowable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level
@@ -50,5 +51,15 @@ interface GithubRepositoryApi {
         @Query("page") page: Int,
         @Query("per_page") perPage: Int
     ): RepositoryResponseApi
+
+
+    // example, pratice for rxjava2
+    @GET("search/repositories")
+    fun searchGithubRepositoryWithFlowable(
+        @Query("q") query: String,
+        @Query("page") page: Int,
+        @Query("per_page") perPage: Int
+    ): Flowable<RepositoryResponseApi>
+
 
 }

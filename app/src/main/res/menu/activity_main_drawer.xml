@@ -16,5 +16,10 @@
             android:id="@+id/repository_fragment"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_repositories_search_fragment" />
+
+        <item
+            android:id="@+id/rxjava2_example"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/menu_rxjava2_example" />
     </group>
 </menu>

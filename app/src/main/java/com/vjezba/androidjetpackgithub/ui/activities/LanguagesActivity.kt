@@ -88,7 +88,8 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
             setOf(
                 R.id.view_pager_fragment,
                 R.id.paggin_with_network_and_db,
-                R.id.repository_fragment
+                R.id.repository_fragment,
+                R.id.rxjava2_example
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -125,6 +126,10 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
         else if (id == R.id.repository_fragment) {
             startActivity(Intent(applicationContext, RepositoriesActivity::class.java))
             finish()
+        }
+        else if( id == R.id.rxjava2_example ) {
+            val direction = HomeViewPagerFragmentDirections.actionViewPagerFragmentToRxjava2ExamplesFragment()
+            navController.navigate(direction)
         }
         drawer_layout?.closeDrawer(GravityCompat.START)
         return true

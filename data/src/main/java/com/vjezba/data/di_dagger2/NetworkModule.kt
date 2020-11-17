@@ -26,6 +26,7 @@ import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
@@ -70,6 +71,7 @@ class NetworkModule {
             .client(client)
             .baseUrl(BASE_URL)
             .addConverterFactory(converterFactory)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
     }
 
     @Singleton

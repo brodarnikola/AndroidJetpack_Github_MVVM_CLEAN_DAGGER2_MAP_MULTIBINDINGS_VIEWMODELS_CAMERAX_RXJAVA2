@@ -23,7 +23,9 @@ import com.vjezba.data.database.AppDatabase
 import com.vjezba.data.database.mapper.DbMapper
 import com.vjezba.data.networking.GithubRepositoryApi
 import com.vjezba.domain.model.RepositoryDetailsResponse
+import com.vjezba.domain.model.RepositoryResponse
 import com.vjezba.domain.repository.GithubRepository
+import io.reactivex.Flowable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -64,6 +66,12 @@ class GithubRepositoryImpl  constructor(
             config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
             pagingSourceFactory = { GithubRepositorySourceLastUpdateTime(service, query) }
         ).flow.map { dbMapper!!.mapApiResponseGithubToDomainGithub(it) }
+    }
+
+    // example, practice of rxjava2
+    override fun getSearchRepositorieWithFlowableRxJava2(query: String): Flowable<RepositoryResponse> {
+        val repositoryResult = service.searchGithubRepositoryWithFlowable(query, 1, 10).map { dbMapper!!.mapApiResponseGithubToDomainGithuWithbRxJavaAndFlowable(it) }!! //?: Flowable<RepositoryResponse(0, false, listOf<RepositoryDetailsResponse>())>
+        return repositoryResult
     }
 
 
