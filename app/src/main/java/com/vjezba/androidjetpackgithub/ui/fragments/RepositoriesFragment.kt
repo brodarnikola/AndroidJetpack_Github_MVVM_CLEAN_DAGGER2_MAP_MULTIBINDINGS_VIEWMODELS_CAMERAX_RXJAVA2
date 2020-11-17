@@ -21,6 +21,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.adapters.GalleryAdapter
 import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesAdapter
@@ -45,7 +46,7 @@ class RepositoriesFragment : Fragment(), Injectable {
     private var searchJob: Job? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
     private lateinit var repositoriesViewModel: GalleryRepositoriesViewModel
 
     var currentSearchText: String = ""

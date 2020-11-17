@@ -67,7 +67,4 @@ abstract class ViewModelModule {
     @ViewModelKey(PaggingWithNetworkAndDbDataViewModel::class)
     abstract fun bindPaggingWithNetworkAndDbDataViewModel(viewModel: PaggingWithNetworkAndDbDataViewModel): ViewModel
 
-
-    @Binds
-    abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 }

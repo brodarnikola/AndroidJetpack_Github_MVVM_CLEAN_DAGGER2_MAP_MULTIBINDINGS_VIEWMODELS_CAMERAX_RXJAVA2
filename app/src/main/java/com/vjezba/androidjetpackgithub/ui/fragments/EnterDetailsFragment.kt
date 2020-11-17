@@ -29,6 +29,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.di.Injectable
+import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.activities.RegistrationActivity
 import com.vjezba.androidjetpackgithub.viewmodels.EnterDetailsViewModel
@@ -51,13 +52,11 @@ class EnterDetailsFragment : Fragment(), Injectable {
     //lateinit var registrationComponent: RegistrationComponent
 
 
-    //val mAppUtils: UserManager by inject()
-    private var registrationViewModel : RegistrationViewModel? = null // activity?.registrationViewModel //RegistrationViewModel( mAppUtils )
+    private var registrationViewModel : RegistrationViewModel? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelFactory
     private lateinit var enterDetailsViewModel: EnterDetailsViewModel
-    //val enterDetailsViewModel : EnterDetailsViewModel by viewModel()
 
     private lateinit var errorTextView: TextView
     private lateinit var usernameEditText: EditText

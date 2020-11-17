@@ -9,11 +9,6 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class FragmentBuildersModule {
 
-
-    @ContributesAndroidInjector
-    abstract fun contributeEnterDetailsFragment(): EnterDetailsFragment
-
-
     @ContributesAndroidInjector
     abstract fun contributeSavedLanguagesFragment(): SavedLanguagesFragment
 

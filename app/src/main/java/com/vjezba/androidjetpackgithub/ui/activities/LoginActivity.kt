@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.vjezba.androidjetpackgithub.R
+import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.viewmodels.LoginViewModel
 import dagger.android.DispatchingAndroidInjector
@@ -23,9 +24,7 @@ class LoginActivity : AppCompatActivity(), HasActivityInjector {
 
     override fun activityInjector() = dispatchingAndroidInjector
 
-    //private val viewModel : LoginViewModel by viewModel()
-
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
