@@ -25,6 +25,7 @@ import com.vjezba.data.networking.GithubRepositoryApi
 import com.vjezba.domain.model.RepositoryDetailsResponse
 import com.vjezba.domain.model.RepositoryResponse
 import com.vjezba.domain.repository.GithubRepository
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -70,7 +71,8 @@ class GithubRepositoryImpl  constructor(
 
     // example, practice of rxjava2
     override fun getSearchRepositorieWithFlowableRxJava2(query: String): Flowable<RepositoryResponse> {
-        val repositoryResult = service.searchGithubRepositoryWithFlowable(query, 1, 10).map { dbMapper!!.mapApiResponseGithubToDomainGithuWithbRxJavaAndFlowable(it) }!! //?: Flowable<RepositoryResponse(0, false, listOf<RepositoryDetailsResponse>())>
+        var repositoryResult = service.searchGithubRepositoryWithFlowable(query, 1, 10).map { dbMapper!!.mapApiResponseGithubToDomainGithuWithbRxJavaAndFlowable(it) }!! //?: Flowable<RepositoryResponse(0, false, listOf<RepositoryDetailsResponse>())>
+        repositoryResult = repositoryResult.onBackpressureBuffer()
         return repositoryResult
     }
 
