@@ -20,8 +20,7 @@ import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
-import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesFragmentAdapter
-import com.vjezba.androidjetpackgithub.viewmodels.GalleryRepositoriesViewModel
+import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesRxJava2FromPublisherAdapter
 import com.vjezba.androidjetpackgithub.viewmodels.RepositoriesRxJava2ViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
 import javax.inject.Inject
@@ -34,7 +33,7 @@ class RepositoriesRxJava2Fragment : Fragment(), Injectable {
     private var btnFind: Button? = null
     private var etInserText: EditText? = null
 
-    private val adapter = RepositoriesFragmentAdapter()
+    private val adapter = RepositoriesRxJava2FromPublisherAdapter()
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory

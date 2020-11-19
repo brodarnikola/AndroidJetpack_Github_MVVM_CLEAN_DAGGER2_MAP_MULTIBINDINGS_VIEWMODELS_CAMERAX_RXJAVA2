@@ -33,4 +33,8 @@ abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
     abstract fun contributeRepositoriesSearchFragment(): RepositoriesRxJava2Fragment
 
+
+    @ContributesAndroidInjector
+    abstract fun contributeRxJava2FlowableToLiveDataFragment(): RxJava2FlowableToLiveDataFragment
+
 }

@@ -29,7 +29,7 @@ import com.vjezba.domain.model.RepositoryDetailsResponse
  * Adapter for the [RecyclerView] in [GalleryFragment].
  */
 
-class RepositoriesFragmentAdapter : RecyclerView.Adapter<RepositoriesFragmentAdapter.RepositoriesViewHolder>() {
+class RepositoriesRxJava2FromPublisherAdapter : RecyclerView.Adapter<RepositoriesRxJava2FromPublisherAdapter.RepositoriesViewHolder>() {
 
     private var repos: MutableList<RepositoryDetailsResponse> = mutableListOf()
 

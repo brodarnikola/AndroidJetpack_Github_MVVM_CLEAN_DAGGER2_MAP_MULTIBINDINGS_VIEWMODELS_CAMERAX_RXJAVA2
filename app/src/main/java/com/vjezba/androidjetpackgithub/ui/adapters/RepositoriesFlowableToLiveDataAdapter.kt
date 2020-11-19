@@ -16,23 +16,18 @@
 
 package com.vjezba.androidjetpackgithub.ui.adapters
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.vjezba.androidjetpackgithub.databinding.ListRepositoryDataBinding
-import com.vjezba.androidjetpackgithub.ui.activities.RepositoriesActivity
-import com.vjezba.androidjetpackgithub.ui.activities.RepositoriesDetailsActivity
+import com.vjezba.androidjetpackgithub.ui.fragments.RxJava2FlowableToLiveDataFragmentDirections
 import com.vjezba.domain.model.RepositoryDetailsResponse
 
-/**
- * Adapter for the [RecyclerView] in [GalleryFragment].
- */
-
-class RepositoriesAdapter : PagingDataAdapter<RepositoryDetailsResponse, RepositoriesAdapter.RepositoriesViewHolder>(
+class RepositoriesFlowableToLiveDataAdapter : PagingDataAdapter<RepositoryDetailsResponse, RepositoriesFlowableToLiveDataAdapter.RepositoriesViewHolder>(
     RepositoriesDiffCallback()
 ) {
 
@@ -66,12 +61,8 @@ class RepositoriesAdapter : PagingDataAdapter<RepositoryDetailsResponse, Reposit
 
         fun navigateToRepositoryDetails(repo: RepositoryDetailsResponse, view: View?) {
 
-            val startIntent = Intent((view?.context as RepositoriesActivity), RepositoriesDetailsActivity::class.java)
-            startIntent.putExtra("repositoryName", repo.name)
-            startIntent.putExtra("lastUpdateTime", repo.lastUpdateTime)
-            startIntent.putExtra("ownerNameValue", repo.ownerApi.login)
-            startIntent.putExtra("repositoryDescription", repo.description)
-            (view.context as RepositoriesActivity).startActivity(startIntent)
+            val direction = RxJava2FlowableToLiveDataFragmentDirections.rxjava2FlowableToLivedataExampleToDetails(repo.name.toString(), repo.lastUpdateTime.toString(), repo.ownerApi.login, repo.description.toString())
+            view?.findNavController()?.navigate(direction)
         }
 
         fun bind(item: RepositoryDetailsResponse) {

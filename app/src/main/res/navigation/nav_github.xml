@@ -28,6 +28,15 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
 
+
+        <action
+            android:id="@+id/action_view_pager_fragment_to_rxjava2_flowable_to_livedata_fragment"
+            app:destination="@id/rxjava2_flowable_to_livedata_example"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
         <action
             android:id="@+id/action_view_pager_fragment_to_rxjava2_examples_fragment"
             app:destination="@id/rxjava2_example"
@@ -91,6 +100,46 @@
         <argument
             android:name="languageName"
             app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/rxjava2_flowable_to_livedata_example"
+        android:name="com.vjezba.androidjetpackgithub.ui.fragments.RxJava2FlowableToLiveDataFragment"
+        android:label="@string/menu_repositories_search_fragment"
+        tools:layout="@layout/fragment_rxjava2_flowablet_to_livedata" >
+
+        <action
+            android:id="@+id/rxjava2_flowable_to_livedata_example_to_details"
+            app:destination="@id/rxjava2_flowable_livedata_example_details"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/rxjava2_flowable_livedata_example_details"
+        android:name="com.vjezba.androidjetpackgithub.ui.fragments.RxJava2FlowableToLiveDataDetailsFragment"
+        android:label="@string/menu_repositories_search_fragment"
+        tools:layout="@layout/fragment_rxjava2_flowable_to_livedata_details" >
+
+        <argument
+            android:name="repositoryName"
+            app:argType="string" />
+
+        <argument
+            android:name="lastUpdateTime"
+            app:argType="string" />
+
+        <argument
+            android:name="ownerName"
+            app:argType="string" />
+
+        <argument
+            android:name="description"
+            app:argType="string" />
+
     </fragment>
 
     <fragment

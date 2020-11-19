@@ -26,12 +26,6 @@
             android:name=".ui.activities.LanguagesActivity"
             android:theme="@style/Theme.Github.NoActionBar">
         </activity>
-        <activity
-            android:name=".ui.activities.RepositoriesActivity" >
-        </activity>
-        <activity
-        android:name=".ui.activities.RepositoriesDetailsActivity"  >
-        </activity>
     </application>
 
 </manifest>
