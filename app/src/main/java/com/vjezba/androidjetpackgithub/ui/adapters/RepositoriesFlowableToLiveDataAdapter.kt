@@ -27,9 +27,9 @@ import com.vjezba.androidjetpackgithub.databinding.ListRepositoryDataBinding
 import com.vjezba.androidjetpackgithub.ui.fragments.RxJava2FlowableToLiveDataFragmentDirections
 import com.vjezba.domain.model.RepositoryDetailsResponse
 
-class RepositoriesFlowableToLiveDataAdapter : PagingDataAdapter<RepositoryDetailsResponse, RepositoriesFlowableToLiveDataAdapter.RepositoriesViewHolder>(
-    RepositoriesDiffCallback()
-) {
+class RepositoriesFlowableToLiveDataAdapter :  RecyclerView.Adapter<RepositoriesFlowableToLiveDataAdapter.RepositoriesViewHolder>() {
+
+    private var repos: MutableList<RepositoryDetailsResponse> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepositoriesViewHolder {
         return RepositoriesViewHolder(
@@ -42,10 +42,19 @@ class RepositoriesFlowableToLiveDataAdapter : PagingDataAdapter<RepositoryDetail
     }
 
     override fun onBindViewHolder(holder: RepositoriesViewHolder, position: Int) {
-        val photo = getItem(position)
-        if (photo != null) {
-            holder.bind(photo)
+        val repos = repos.get(position)
+        if (repos != null) {
+            holder.bind(repos)
         }
+    }
+
+    fun setRepos(mRepos: MutableList<RepositoryDetailsResponse>) {
+        repos = mRepos
+        notifyDataSetChanged()
+    }
+
+    override fun getItemCount(): Int {
+        return repos.size
     }
 
     class RepositoriesViewHolder(
@@ -69,19 +78,10 @@ class RepositoriesFlowableToLiveDataAdapter : PagingDataAdapter<RepositoryDetail
             binding.apply {
                 repo = item
                 binding.repositorieName.text = item.name
-                binding.lastUpdateTime.text = item.lastUpdateTime
+                binding.description.text = item.description
                 executePendingBindings()
             }
         }
     }
 }
 
-private class RepositoriesDiffCallback : DiffUtil.ItemCallback<RepositoryDetailsResponse>() {
-    override fun areItemsTheSame(oldItem: RepositoryDetailsResponse, newItem: RepositoryDetailsResponse): Boolean {
-        return oldItem.id == newItem.id
-    }
-
-    override fun areContentsTheSame(oldItem: RepositoryDetailsResponse, newItem: RepositoryDetailsResponse): Boolean {
-        return oldItem == newItem
-    }
-}

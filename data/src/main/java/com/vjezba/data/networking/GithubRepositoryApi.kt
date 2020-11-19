@@ -26,9 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-/**
- * Used to connect to the Unsplash API to fetch photos
- */
+
 interface GithubRepositoryApi {
 
     @GET("search/repositories")

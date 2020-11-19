@@ -80,7 +80,7 @@ class RepositoriesRxJava2FromPublisherAdapter : RecyclerView.Adapter<Repositorie
             binding.apply {
                 repo = item
                 binding.repositorieName.text = item.name
-                binding.lastUpdateTime.text = item.lastUpdateTime
+                binding.description.text = item.description
                 executePendingBindings()
             }
         }
