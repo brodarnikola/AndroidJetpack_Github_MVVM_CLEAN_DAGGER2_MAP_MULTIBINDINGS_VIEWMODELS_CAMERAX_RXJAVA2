@@ -20,16 +20,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.vjezba.androidjetpackgithub.databinding.ListRepositoryDataBinding
-import com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesRxJava2FragmentDirections
+import com.vjezba.androidjetpackgithub.ui.fragments.RxJava2FlowableToLiveDataFragmentDirections
 import com.vjezba.domain.model.RepositoryDetailsResponse
 
-/**
- * Adapter for the [RecyclerView] in [GalleryFragment].
- */
-
-class RepositoriesFragmentAdapter : RecyclerView.Adapter<RepositoriesFragmentAdapter.RepositoriesViewHolder>() {
+class RepositoriesFlowableToLiveDataAdapter :  RecyclerView.Adapter<RepositoriesFlowableToLiveDataAdapter.RepositoriesViewHolder>() {
 
     private var repos: MutableList<RepositoryDetailsResponse> = mutableListOf()
 
@@ -50,13 +48,13 @@ class RepositoriesFragmentAdapter : RecyclerView.Adapter<RepositoriesFragmentAda
         }
     }
 
-    override fun getItemCount(): Int {
-        return repos.size
-    }
-
     fun setRepos(mRepos: MutableList<RepositoryDetailsResponse>) {
         repos = mRepos
         notifyDataSetChanged()
+    }
+
+    override fun getItemCount(): Int {
+        return repos.size
     }
 
     class RepositoriesViewHolder(
@@ -72,7 +70,7 @@ class RepositoriesFragmentAdapter : RecyclerView.Adapter<RepositoriesFragmentAda
 
         fun navigateToRepositoryDetails(repo: RepositoryDetailsResponse, view: View?) {
 
-            val direction = RepositoriesRxJava2FragmentDirections.repositoryFragmentToDetailsRepositoryFragment(repo.name.toString(), repo.lastUpdateTime.toString(), repo.ownerApi.login, repo.description.toString())
+            val direction = RxJava2FlowableToLiveDataFragmentDirections.rxjava2FlowableToLivedataExampleToDetails(repo.name.toString(), repo.lastUpdateTime.toString(), repo.ownerApi.login, repo.description.toString())
             view?.findNavController()?.navigate(direction)
         }
 
@@ -80,9 +78,10 @@ class RepositoriesFragmentAdapter : RecyclerView.Adapter<RepositoriesFragmentAda
             binding.apply {
                 repo = item
                 binding.repositorieName.text = item.name
-                binding.lastUpdateTime.text = item.lastUpdateTime
+                binding.description.text = item.description
                 executePendingBindings()
             }
         }
     }
 }
+

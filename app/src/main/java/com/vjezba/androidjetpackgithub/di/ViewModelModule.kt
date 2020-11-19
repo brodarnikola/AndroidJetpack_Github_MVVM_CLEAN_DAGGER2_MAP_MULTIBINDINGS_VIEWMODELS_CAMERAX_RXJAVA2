@@ -74,4 +74,9 @@ abstract class ViewModelModule {
     @ViewModelKey(RepositoriesRxJava2ViewModel::class)
     abstract fun bindRepositoriesRxJava2ViewModel(viewModel: RepositoriesRxJava2ViewModel): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(RxJava2FlowableToLiveDataViewModel::class)
+    abstract fun bindRxJava2FlowableToLiveDataViewModel(viewModel: RxJava2FlowableToLiveDataViewModel): ViewModel
+
 }

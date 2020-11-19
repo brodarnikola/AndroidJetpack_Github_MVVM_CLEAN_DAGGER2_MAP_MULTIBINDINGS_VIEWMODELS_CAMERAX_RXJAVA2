@@ -23,6 +23,6 @@ abstract class ActivityBuildersModule {
 
 
     //@ContributesAndroidInjector()
-    //abstract fun contributeRepositoriesActivity(): RepositoriesActivity
+    //abstract fun contributeRepositoriesActivity(): RxJava2FlowableToLiveDataFragment
 
 }

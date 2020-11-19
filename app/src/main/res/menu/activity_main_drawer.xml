@@ -13,7 +13,7 @@
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/menu_numbers" />
         <item
-            android:id="@+id/repository_fragment"
+            android:id="@+id/rxjava2_flowable_to_livedata_example"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_repositories_search_fragment" />
 

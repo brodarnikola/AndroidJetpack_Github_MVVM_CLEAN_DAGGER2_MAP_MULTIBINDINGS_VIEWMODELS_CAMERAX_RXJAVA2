@@ -16,25 +16,22 @@
 
 package com.vjezba.androidjetpackgithub.ui.adapters
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.vjezba.androidjetpackgithub.databinding.ListRepositoryDataBinding
-import com.vjezba.androidjetpackgithub.ui.activities.RepositoriesActivity
-import com.vjezba.androidjetpackgithub.ui.activities.RepositoriesDetailsActivity
+import com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesRxJava2FragmentDirections
 import com.vjezba.domain.model.RepositoryDetailsResponse
 
 /**
  * Adapter for the [RecyclerView] in [GalleryFragment].
  */
 
-class RepositoriesAdapter : PagingDataAdapter<RepositoryDetailsResponse, RepositoriesAdapter.RepositoriesViewHolder>(
-    RepositoriesDiffCallback()
-) {
+class RepositoriesRxJava2FromPublisherAdapter : RecyclerView.Adapter<RepositoriesRxJava2FromPublisherAdapter.RepositoriesViewHolder>() {
+
+    private var repos: MutableList<RepositoryDetailsResponse> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepositoriesViewHolder {
         return RepositoriesViewHolder(
@@ -47,10 +44,19 @@ class RepositoriesAdapter : PagingDataAdapter<RepositoryDetailsResponse, Reposit
     }
 
     override fun onBindViewHolder(holder: RepositoriesViewHolder, position: Int) {
-        val photo = getItem(position)
-        if (photo != null) {
-            holder.bind(photo)
+        val repos = repos.get(position)
+        if (repos != null) {
+            holder.bind(repos)
         }
+    }
+
+    override fun getItemCount(): Int {
+        return repos.size
+    }
+
+    fun setRepos(mRepos: MutableList<RepositoryDetailsResponse>) {
+        repos = mRepos
+        notifyDataSetChanged()
     }
 
     class RepositoriesViewHolder(
@@ -66,31 +72,17 @@ class RepositoriesAdapter : PagingDataAdapter<RepositoryDetailsResponse, Reposit
 
         fun navigateToRepositoryDetails(repo: RepositoryDetailsResponse, view: View?) {
 
-            val startIntent = Intent((view?.context as RepositoriesActivity), RepositoriesDetailsActivity::class.java)
-            startIntent.putExtra("repositoryName", repo.name)
-            startIntent.putExtra("lastUpdateTime", repo.lastUpdateTime)
-            startIntent.putExtra("ownerNameValue", repo.ownerApi.login)
-            startIntent.putExtra("repositoryDescription", repo.description)
-            (view.context as RepositoriesActivity).startActivity(startIntent)
+            val direction = RepositoriesRxJava2FragmentDirections.repositoryFragmentToDetailsRepositoryFragment(repo.name.toString(), repo.lastUpdateTime.toString(), repo.ownerApi.login, repo.description.toString())
+            view?.findNavController()?.navigate(direction)
         }
 
         fun bind(item: RepositoryDetailsResponse) {
             binding.apply {
                 repo = item
                 binding.repositorieName.text = item.name
-                binding.lastUpdateTime.text = item.lastUpdateTime
+                binding.description.text = item.description
                 executePendingBindings()
             }
         }
-    }
-}
-
-private class RepositoriesDiffCallback : DiffUtil.ItemCallback<RepositoryDetailsResponse>() {
-    override fun areItemsTheSame(oldItem: RepositoryDetailsResponse, newItem: RepositoryDetailsResponse): Boolean {
-        return oldItem.id == newItem.id
-    }
-
-    override fun areContentsTheSame(oldItem: RepositoryDetailsResponse, newItem: RepositoryDetailsResponse): Boolean {
-        return oldItem == newItem
     }
 }

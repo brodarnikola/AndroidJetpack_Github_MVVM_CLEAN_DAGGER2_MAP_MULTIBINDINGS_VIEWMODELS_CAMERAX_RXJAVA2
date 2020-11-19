@@ -31,19 +31,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal">
 
-<!--                <TextView-->
-<!--                    android:id="@+id/language_detail_name"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="@dimen/margin_small"-->
-<!--                    android:layout_marginEnd="@dimen/margin_small"-->
-<!--                    android:gravity="center_horizontal"-->
-<!--                    android:textAppearance="?attr/textAppearanceHeadline5"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    tools:text="REPOSITORY DETAILS" />-->
-
                 <TextView
                     android:id="@+id/language_created_by_header"
                     android:layout_width="0dp"

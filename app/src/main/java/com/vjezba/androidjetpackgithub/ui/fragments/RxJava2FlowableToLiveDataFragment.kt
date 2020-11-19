@@ -8,36 +8,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.vjezba.androidjetpackgithub.R
-import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesBinding
+import com.vjezba.androidjetpackgithub.databinding.FragmentRxjava2FlowabletToLivedataBinding
 import com.vjezba.androidjetpackgithub.di.Injectable
 import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
-import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesRxJava2FromPublisherAdapter
-import com.vjezba.androidjetpackgithub.viewmodels.RepositoriesRxJava2ViewModel
+import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesFlowableToLiveDataAdapter
+import com.vjezba.androidjetpackgithub.viewmodels.RxJava2FlowableToLiveDataViewModel
+import com.vjezba.domain.model.RepositoryResponse
 import kotlinx.android.synthetic.main.activity_languages_main.*
+import kotlinx.android.synthetic.main.fragment_rxjava2_flowablet_to_livedata.*
 import javax.inject.Inject
 
 
-class RepositoriesRxJava2Fragment : Fragment(), Injectable {
+class RxJava2FlowableToLiveDataFragment : Fragment(), Injectable {
 
-    private var progressBarRepos: ProgressBar? = null
-    private var languageListRepository: RecyclerView? = null
-    private var btnFind: Button? = null
-    private var etInserText: EditText? = null
-
-    private val adapter = RepositoriesRxJava2FromPublisherAdapter()
+    private val adapter = RepositoriesFlowableToLiveDataAdapter()
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var repositoriesViewModel: RepositoriesRxJava2ViewModel
+    private lateinit var repositoriesViewModel: RxJava2FlowableToLiveDataViewModel
 
     var currentSearchText: String = ""
     var lastCurrentSearchText: String = ""
@@ -50,34 +44,37 @@ class RepositoriesRxJava2Fragment : Fragment(), Injectable {
 
         repositoriesViewModel = injectViewModel(viewModelFactory)
 
-        val binding = FragmentRepositoriesBinding.inflate(inflater, container, false)
+        val binding = FragmentRxjava2FlowabletToLivedataBinding.inflate(inflater, container, false)
         context ?: return binding.root
 
         activity?.speedDial?.visibility = View.GONE
         activity?.toolbar?.title = getString(R.string.gallery_title)
 
-        initializeViews(binding)
-        search()
-        setEdittextListener()
+        //initializeViews(binding)
+        search(binding)
+        setEdittextListener(binding)
 
         setupAdapter(binding)
 
         return binding.root
     }
 
-    private fun setupAdapter(binding: FragmentRepositoriesBinding) {
-        binding.languageListRepos.adapter = adapter
+    override fun onStart() {
+        super.onStart()
+
+        repositoriesViewModel.observeReposInfo().observe(viewLifecycleOwner, Observer { repos ->
+            list_repos?.visibility = View.VISIBLE
+            progressBarRepositories?.visibility = View.GONE
+            adapter.setRepos(repos.items.toMutableList())
+        })
     }
 
-    private fun initializeViews(binding: FragmentRepositoriesBinding) {
-        progressBarRepos = binding.progressBarRepositories
-        languageListRepository = binding.languageListRepos
-        btnFind = binding.btnFind
-        etInserText = binding.etInsertText
+    private fun setupAdapter(binding: FragmentRxjava2FlowabletToLivedataBinding) {
+        binding.listRepos.adapter = adapter
     }
 
-    private fun setEdittextListener() {
-        etInserText?.addTextChangedListener(object : TextWatcher {
+    private fun setEdittextListener(binding: FragmentRxjava2FlowabletToLivedataBinding) {
+        binding.etInsertText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(
                 s: CharSequence, start: Int,
@@ -94,34 +91,29 @@ class RepositoriesRxJava2Fragment : Fragment(), Injectable {
         })
     }
 
-    private fun search() {
-        btnFind?.setOnClickListener {
+    private fun search(binding: FragmentRxjava2FlowabletToLivedataBinding) {
+        binding.btnFindRepos.setOnClickListener {
             if( currentSearchText != "" ) {
                 hideKeyboard(this.requireActivity())
-                // Make sure we cancel the previous job before creating a new one
                 if (currentSearchText == lastCurrentSearchText) {
-                    progressBarRepos?.visibility = View.VISIBLE
-                    languageListRepository?.visibility = View.GONE
-                    repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithLiveData(currentSearchText).observe(viewLifecycleOwner, Observer { repos ->
-                        languageListRepository?.visibility = View.VISIBLE
-                        progressBarRepos?.visibility = View.GONE
-                        adapter.setRepos(repos.items.toMutableList())
-                    })
+
+                    progressBarRepositories?.visibility = View.VISIBLE
+                    list_repos?.visibility = View.GONE
+
+                    repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithFlowableAndLiveData(currentSearchText)
                 } else {
                     lastCurrentSearchText = currentSearchText
                     adapter.notifyItemRangeRemoved(0, adapter.itemCount)
-                    progressBarRepos?.visibility = View.VISIBLE
-                    languageListRepository?.visibility = View.GONE
-                    repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithLiveData(currentSearchText).observe(viewLifecycleOwner, Observer { repos ->
-                        languageListRepository?.visibility = View.VISIBLE
-                        progressBarRepos?.visibility = View.GONE
-                        adapter.setRepos(repos.items.toMutableList())
-                    })
+
+                    progressBarRepositories?.visibility = View.VISIBLE
+                    list_repos?.visibility = View.GONE
+
+                    repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithFlowableAndLiveData(currentSearchText)
                 }
             }
             else {
                 Snackbar.make(
-                    this@RepositoriesRxJava2Fragment.requireView(),
+                    clMainLayout,
                     "You did not insert any text to search repositories.",
                     Snackbar.LENGTH_LONG
                 ).show()
@@ -140,5 +132,6 @@ class RepositoriesRxJava2Fragment : Fragment(), Injectable {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
     }
+
 
 }
