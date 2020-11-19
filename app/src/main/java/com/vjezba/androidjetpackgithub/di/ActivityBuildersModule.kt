@@ -22,7 +22,7 @@ abstract class ActivityBuildersModule {
     abstract fun contributeSplashActivity(): SplashActivity
 
 
-    @ContributesAndroidInjector()
-    abstract fun contributeRepositoriesActivity(): RepositoriesActivity
+    //@ContributesAndroidInjector()
+    //abstract fun contributeRepositoriesActivity(): RepositoriesActivity
 
 }

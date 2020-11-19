@@ -22,7 +22,7 @@ import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.vjezba.androidjetpackgithub.databinding.ListRepositoryDataBinding
-import com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesFragmentDirections
+import com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesRxJava2FragmentDirections
 import com.vjezba.domain.model.RepositoryDetailsResponse
 
 /**
@@ -72,7 +72,7 @@ class RepositoriesFragmentAdapter : RecyclerView.Adapter<RepositoriesFragmentAda
 
         fun navigateToRepositoryDetails(repo: RepositoryDetailsResponse, view: View?) {
 
-            val direction = RepositoriesFragmentDirections.repositoryFragmentToDetailsRepositoryFragment(repo.name.toString(), repo.lastUpdateTime.toString(), repo.ownerApi.login, repo.description.toString())
+            val direction = RepositoriesRxJava2FragmentDirections.repositoryFragmentToDetailsRepositoryFragment(repo.name.toString(), repo.lastUpdateTime.toString(), repo.ownerApi.login, repo.description.toString())
             view?.findNavController()?.navigate(direction)
         }
 

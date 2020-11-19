@@ -1,19 +1,18 @@
 package com.vjezba.androidjetpackgithub.ui.fragments
 
+import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.vjezba.androidjetpackgithub.R
@@ -23,12 +22,12 @@ import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.adapters.RepositoriesFragmentAdapter
 import com.vjezba.androidjetpackgithub.viewmodels.GalleryRepositoriesViewModel
+import com.vjezba.androidjetpackgithub.viewmodels.RepositoriesRxJava2ViewModel
 import kotlinx.android.synthetic.main.activity_languages_main.*
-import kotlinx.coroutines.Job
 import javax.inject.Inject
 
 
-class RepositoriesFragment : Fragment(), Injectable {
+class RepositoriesRxJava2Fragment : Fragment(), Injectable {
 
     private var progressBarRepos: ProgressBar? = null
     private var languageListRepository: RecyclerView? = null
@@ -39,7 +38,7 @@ class RepositoriesFragment : Fragment(), Injectable {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var repositoriesViewModel: GalleryRepositoriesViewModel
+    private lateinit var repositoriesViewModel: RepositoriesRxJava2ViewModel
 
     var currentSearchText: String = ""
     var lastCurrentSearchText: String = ""
@@ -99,10 +98,13 @@ class RepositoriesFragment : Fragment(), Injectable {
     private fun search() {
         btnFind?.setOnClickListener {
             if( currentSearchText != "" ) {
+                hideKeyboard(this.requireActivity())
                 // Make sure we cancel the previous job before creating a new one
                 if (currentSearchText == lastCurrentSearchText) {
                     progressBarRepos?.visibility = View.VISIBLE
+                    languageListRepository?.visibility = View.GONE
                     repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithLiveData(currentSearchText).observe(viewLifecycleOwner, Observer { repos ->
+                        languageListRepository?.visibility = View.VISIBLE
                         progressBarRepos?.visibility = View.GONE
                         adapter.setRepos(repos.items.toMutableList())
                     })
@@ -110,7 +112,9 @@ class RepositoriesFragment : Fragment(), Injectable {
                     lastCurrentSearchText = currentSearchText
                     adapter.notifyItemRangeRemoved(0, adapter.itemCount)
                     progressBarRepos?.visibility = View.VISIBLE
+                    languageListRepository?.visibility = View.GONE
                     repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithLiveData(currentSearchText).observe(viewLifecycleOwner, Observer { repos ->
+                        languageListRepository?.visibility = View.VISIBLE
                         progressBarRepos?.visibility = View.GONE
                         adapter.setRepos(repos.items.toMutableList())
                     })
@@ -118,12 +122,24 @@ class RepositoriesFragment : Fragment(), Injectable {
             }
             else {
                 Snackbar.make(
-                    this@RepositoriesFragment.requireView(),
+                    this@RepositoriesRxJava2Fragment.requireView(),
                     "You did not insert any text to search repositories.",
                     Snackbar.LENGTH_LONG
                 ).show()
             }
         }
+    }
+
+    fun hideKeyboard(activity: Activity) {
+        val imm: InputMethodManager =
+            activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view: View? = activity.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
     }
 
 }
