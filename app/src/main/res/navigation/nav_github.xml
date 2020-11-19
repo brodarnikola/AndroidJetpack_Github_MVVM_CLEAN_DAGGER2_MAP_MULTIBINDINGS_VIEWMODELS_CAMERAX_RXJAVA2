@@ -11,13 +11,6 @@
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_view_pager">
 
-        <action
-            android:id="@+id/action_view_pager_fragment_to_home_fragment"
-            app:destination="@id/view_pager_fragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
 
         <action
             android:id="@+id/action_view_pager_fragment_to_language_details_fragment"
@@ -102,7 +95,7 @@
 
     <fragment
         android:id="@+id/rxjava2_example"
-        android:name="com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesFragment"
+        android:name="com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesRxJava2Fragment"
         android:label="@string/menu_repositories_search_fragment"
         tools:layout="@layout/fragment_repositories" >
 
@@ -118,7 +111,7 @@
 
     <fragment
         android:id="@+id/repository_details_fragment"
-        android:name="com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesDetailsFragment"
+        android:name="com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesRxJava2DetailsFragment"
         android:label="@string/menu_repositories_search_fragment"
         tools:layout="@layout/fragment_repositories_details" >
 

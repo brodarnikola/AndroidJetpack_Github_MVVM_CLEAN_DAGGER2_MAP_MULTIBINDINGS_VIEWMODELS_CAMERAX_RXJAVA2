@@ -56,7 +56,7 @@ abstract class ViewModelModule {
     abstract fun bindGalleryViewModel(repositoriesViewModel: GalleryRepositoriesViewModel): ViewModel
 
 
-    // pagging with network and database viewmodels
+    // pagging3 with network and database viewmodels
     @Binds
     @IntoMap
     @ViewModelKey(PaggingWithNetworkAndDbViewModel::class)
@@ -66,5 +66,12 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PaggingWithNetworkAndDbDataViewModel::class)
     abstract fun bindPaggingWithNetworkAndDbDataViewModel(viewModel: PaggingWithNetworkAndDbDataViewModel): ViewModel
+
+
+    // rxjava2 example with viewmodels
+    @Binds
+    @IntoMap
+    @ViewModelKey(RepositoriesRxJava2ViewModel::class)
+    abstract fun bindRepositoriesRxJava2ViewModel(viewModel: RepositoriesRxJava2ViewModel): ViewModel
 
 }

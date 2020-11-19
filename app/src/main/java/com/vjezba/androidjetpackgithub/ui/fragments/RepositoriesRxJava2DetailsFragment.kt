@@ -27,9 +27,9 @@ import com.vjezba.androidjetpackgithub.databinding.FragmentRepositoriesDetailsBi
 import kotlinx.android.synthetic.main.activity_languages_main.*
 
 
-class RepositoriesDetailsFragment : Fragment() {
+class RepositoriesRxJava2DetailsFragment : Fragment() {
 
-    private val args: RepositoriesDetailsFragmentArgs by navArgs()
+    private val args: RepositoriesRxJava2DetailsFragmentArgs by navArgs()
 
     private var repositoryName: TextView? = null
     private var lastUpdateTime: TextView? = null

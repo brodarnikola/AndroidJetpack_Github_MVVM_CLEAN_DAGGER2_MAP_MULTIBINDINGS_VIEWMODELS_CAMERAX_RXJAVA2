@@ -3,6 +3,7 @@ package com.vjezba.androidjetpackgithub.ui.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
@@ -38,7 +39,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
-class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFragmentInjector, NavigationView.OnNavigationItemSelectedListener {
+class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFragmentInjector {
 
     @Inject
     lateinit var dispatchingAndroidActivityInjector: DispatchingAndroidInjector<Activity>
@@ -55,7 +56,6 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
 
     @Inject
     lateinit var userManager: UserManager
-
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
@@ -94,45 +94,6 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        nav_view!!.setNavigationItemSelectedListener(this)
-    }
-
-    /**
-     * Called when an item in the navigation menu is selected.
-     *
-     * @param item The selected item
-     * @return true to display the item as the selected item
-     */
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-
-        //to prevent current item select over and over
-
-        //to prevent current item select over and over
-        if (item.isChecked) {
-            drawer_layout?.closeDrawer(GravityCompat.START)
-            return false
-        }
-
-
-        if( id == R.id.view_pager_fragment ) {
-            navController.popBackStack()
-        }
-        else if( id == R.id.paggin_with_network_and_db ) {
-            val direction = HomeViewPagerFragmentDirections.actionViewPagerFragmentToSlideshowFragment()
-            navController.navigate(direction)
-        }
-        else if (id == R.id.repository_fragment) {
-            startActivity(Intent(applicationContext, RepositoriesActivity::class.java))
-            finish()
-        }
-        else if( id == R.id.rxjava2_example ) {
-            val direction = HomeViewPagerFragmentDirections.actionViewPagerFragmentToRxjava2ExamplesFragment()
-            navController.navigate(direction)
-        }
-        drawer_layout?.closeDrawer(GravityCompat.START)
-        return true
     }
 
     override fun onStart() {

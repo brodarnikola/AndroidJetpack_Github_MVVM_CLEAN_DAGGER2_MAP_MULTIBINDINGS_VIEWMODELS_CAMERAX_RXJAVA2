@@ -17,22 +17,15 @@
 package com.vjezba.androidjetpackgithub.ui.adapters
 
 import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.startActivity
-import androidx.navigation.findNavController
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.vjezba.androidjetpackgithub.databinding.ListRepositoryDataBinding
 import com.vjezba.androidjetpackgithub.ui.activities.RepositoriesActivity
 import com.vjezba.androidjetpackgithub.ui.activities.RepositoriesDetailsActivity
-import com.vjezba.androidjetpackgithub.ui.fragments.HomeViewPagerFragmentDirections
-import com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesFragment
-import com.vjezba.androidjetpackgithub.ui.fragments.RepositoriesFragmentDirections
-import com.vjezba.androidjetpackgithub.viewmodels.SavedAndAllLanguagesViewModel
 import com.vjezba.domain.model.RepositoryDetailsResponse
 
 /**
