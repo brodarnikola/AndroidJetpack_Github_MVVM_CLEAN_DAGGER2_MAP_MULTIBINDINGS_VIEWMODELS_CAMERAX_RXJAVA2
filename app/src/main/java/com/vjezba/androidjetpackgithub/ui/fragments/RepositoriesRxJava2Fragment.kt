@@ -54,7 +54,7 @@ class RepositoriesRxJava2Fragment : Fragment(), Injectable {
         context ?: return binding.root
 
         activity?.speedDial?.visibility = View.GONE
-        activity?.toolbar?.title = getString(R.string.gallery_title)
+        activity?.toolbar?.title = getString(R.string.menu_rxjava2_example)
 
         initializeViews(binding)
         search()
