@@ -47,16 +47,6 @@ class RxJava2FlowableToLiveDataViewModel @Inject internal constructor(
     private val reposInfoAutomatic: LiveData<RepositoryResponse>? = null
     private val compositeDisposable = CompositeDisposable()
 
-    private val loading = MutableLiveData<Boolean>()
-    private val apiError = MutableLiveData<Throwable>()
-
-
-
-    fun apiError(): MutableLiveData<Throwable> {
-        return apiError
-    }
-
-
     fun observeReposInfo(): LiveData<RepositoryResponse> {
         return reposInfo
     }

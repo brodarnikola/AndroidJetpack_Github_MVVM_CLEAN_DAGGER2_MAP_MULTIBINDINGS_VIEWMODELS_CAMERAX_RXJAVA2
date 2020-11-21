@@ -1,9 +1,11 @@
 package com.vjezba.androidjetpackgithub.ui.fragments
 
 import android.app.Activity
+import android.content.ContentValues
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +43,8 @@ class RxJava2FlowableToLiveDataFragment : Fragment(), Injectable {
 
     lateinit var binding:FragmentRxjava2FlowabletToLivedataBinding
 
+    private var disposable: Disposable? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -65,19 +69,23 @@ class RxJava2FlowableToLiveDataFragment : Fragment(), Injectable {
 
         binding.let { search(it) }
         binding.let { setEdittextListener(it) }
-        binding.let { setAutomaticEdittextListener(it) }
+        binding.let { setAutomaticSearchViewListener() }
 
         binding.let { setupAdapter(it) }
 
-        repositoriesViewModel.observeReposInfo().observe(viewLifecycleOwner, Observer { repos ->
-            list_repos?.visibility = View.VISIBLE
-            progressBarRepositories?.visibility = View.GONE
+        repositoriesViewModel.observeReposInfo().observe(viewLifecycleOwner, Observer { repos -> 
+            hideOrShowRecyclerViewAndProgressBar(
+                showRecyclerView = true,
+                showProgressBar = false
+            )
             adapter.setRepos(repos.items.toMutableList())
         })
 
         repositoriesViewModel.observeReposInfoAutomatic()?.observe(viewLifecycleOwner, Observer { repos ->
-            list_repos?.visibility = View.VISIBLE
-            progressBarRepositories?.visibility = View.GONE
+            hideOrShowRecyclerViewAndProgressBar(
+                showRecyclerView = true,
+                showProgressBar = false
+            )
             adapter.notifyItemRangeRemoved(0, adapter.itemCount)
             adapter.setRepos(repos.items.toMutableList())
         })
@@ -128,9 +136,7 @@ class RxJava2FlowableToLiveDataFragment : Fragment(), Injectable {
         binding.listRepos.adapter = adapter
     }
 
-    private var disposable: Disposable? = null
-
-    private fun observeSearchView() {
+    private fun setAutomaticSearchViewListener() {
 
         val subject = PublishSubject.create<String>()
         disposable = subject
@@ -141,14 +147,20 @@ class RxJava2FlowableToLiveDataFragment : Fragment(), Injectable {
             .switchMap({ s -> io.reactivex.Observable.just(s) })
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ query ->
-
+                hideKeyboard(this.requireActivity())
+                hideOrShowRecyclerViewAndProgressBar(
+                    showRecyclerView = false,
+                    showProgressBar = true
+                )
                 repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithFlowableAndLiveData(query)
             })
 
         etInsertTextAutomatic.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(s: String?): Boolean {
-                subject.onComplete()
-                etInsertTextAutomatic.clearFocus()
+                Log.d(ContentValues.TAG, "Hide keyboard user pressed done button")
+                hideKeyboard(this@RxJava2FlowableToLiveDataFragment.requireActivity())
+                //subject.onComplete()
+                //etInsertTextAutomatic.clearFocus()
                 return true
             }
 
@@ -157,72 +169,6 @@ class RxJava2FlowableToLiveDataFragment : Fragment(), Injectable {
                 return true
             }
         })
-    }
-
-    private fun setAutomaticEdittextListener(binding: FragmentRxjava2FlowabletToLivedataBinding) {
-
-        // DOBRO ISTO JAKO LIJEPO RADI
-        observeSearchView()
-
-        // TAJ PRIMJER MI RADI ODLICNO
-        /*val subject = PublishSubject.create<String>()
-
-        etInsertTextAutomatic.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(s: String?): Boolean {
-                subject.onComplete()
-                etInsertTextAutomatic.clearFocus()
-                return true
-            }
-
-            override fun onQueryTextChange(text: String): Boolean {
-                subject.onNext(text)
-                return true
-            }
-        })
-
-        subject
-            .debounce(1000, TimeUnit.MILLISECONDS)
-            .filter(Predicate<String> { text ->
-                if (text.isEmpty()) {
-                    //textViewResult.setText("")
-                    false
-                } else {
-                    true
-                }
-            })
-            .distinctUntilChanged()
-            .switchMap(object : io.reactivex.functions.Function<String, ObservableSource<RepositoryResponseApi>> {
-                override fun apply(query: String): Observable<RepositoryResponseApi> {
-                    return setupRetrofitFlatMap().searchGithubRepositoryWithFlowable(query, 0, 10)
-                        .doOnError({ throwable -> Log.d(TAG, "onError received EEEE: ${throwable}") })
-                        .onErrorReturn { throwable -> Log.d(TAG, "onError received DDDD: ${throwable}")
-                            RepositoryResponseApi(0, false, listOf()) }
-                        .toObservable()
-                }
-            })
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : io.reactivex.Observer<RepositoryResponseApi> {
-                override fun onComplete() {
-                }
-
-                override fun onSubscribe(d: Disposable) {
-                }
-
-                override fun onNext(response: RepositoryResponseApi) {
-                    Log.d(TAG, "Da li ce uci sim EEEE: ${response}")
-                    list_repos?.visibility = View.VISIBLE
-                    progressBarRepositories?.visibility = View.GONE
-                    val proba: RepositoryResponse = dbMapperImpl.mapApiResponseGithubToDomainGithuWithbRxJavaAndFlowable(response)
-                    adapter.setRepos(proba.items.toMutableList())
-                    //reposInfoAutomatic.value = response
-                }
-
-                override fun onError(e: Throwable) {
-                    Log.e(ContentValues.TAG, "onError received: ${e}")
-                }
-            })*/
-
     }
 
     private fun setEdittextListener(binding: FragmentRxjava2FlowabletToLivedataBinding) {
@@ -249,16 +195,20 @@ class RxJava2FlowableToLiveDataFragment : Fragment(), Injectable {
                 hideKeyboard(this.requireActivity())
                 if (currentSearchText == lastCurrentSearchText) {
 
-                    progressBarRepositories?.visibility = View.VISIBLE
-                    list_repos?.visibility = View.GONE
+                    hideOrShowRecyclerViewAndProgressBar(
+                        showRecyclerView = false,
+                        showProgressBar = true
+                    )
 
                     repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithFlowableAndLiveData(currentSearchText)
                 } else {
                     lastCurrentSearchText = currentSearchText
                     adapter.notifyItemRangeRemoved(0, adapter.itemCount)
 
-                    progressBarRepositories?.visibility = View.VISIBLE
-                    list_repos?.visibility = View.GONE
+                    hideOrShowRecyclerViewAndProgressBar(
+                        showRecyclerView = false,
+                        showProgressBar = true
+                    )
 
                     repositoriesViewModel.searchGithubRepositoryByLastUpdateTimeWithFlowableAndLiveData(currentSearchText)
                 }
@@ -273,6 +223,11 @@ class RxJava2FlowableToLiveDataFragment : Fragment(), Injectable {
         }
     }
 
+    private fun hideOrShowRecyclerViewAndProgressBar( showRecyclerView: Boolean, showProgressBar: Boolean) {
+        list_repos?.visibility = if( showRecyclerView ) View.VISIBLE else View.GONE
+        progressBarRepositories?.visibility = if( showProgressBar ) View.VISIBLE else View.GONE
+    }
+
     fun hideKeyboard(activity: Activity) {
         val imm: InputMethodManager =
             activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -285,5 +240,15 @@ class RxJava2FlowableToLiveDataFragment : Fragment(), Injectable {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        disposable?.apply {
+            if( !isDisposed) {
+                this.dispose()
+                disposable = null
+            }
+        }
+    }
 
 }
