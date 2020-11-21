@@ -20,21 +20,51 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.vjezba.domain.model.RepositoryDetailsResponse
 import com.vjezba.domain.model.RepositoryResponse
 import com.vjezba.domain.repository.GithubRepository
+
+import io.reactivex.Observable
+import io.reactivex.ObservableSource
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Predicate
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
 
 class RxJava2FlowableToLiveDataViewModel @Inject internal constructor(
     private val repository: GithubRepository
 ) : ViewModel() {
 
     private val reposInfo: MediatorLiveData<RepositoryResponse> = MediatorLiveData<RepositoryResponse>()
+    private val reposInfoAutomatic: LiveData<RepositoryResponse>? = null
     private val compositeDisposable = CompositeDisposable()
+
+    private val loading = MutableLiveData<Boolean>()
+    private val apiError = MutableLiveData<Throwable>()
+
+
+
+    fun apiError(): MutableLiveData<Throwable> {
+        return apiError
+    }
+
+
+    fun observeReposInfo(): LiveData<RepositoryResponse> {
+        return reposInfo
+    }
+
+    fun observeReposInfoAutomatic(): LiveData<RepositoryResponse>? {
+        return reposInfoAutomatic
+    }
+
 
     fun searchGithubRepositoryByLastUpdateTimeWithFlowableAndLiveData(query: String) {
         repository.getSearchRepositorieWithFlowableRxJava2(query)
@@ -47,6 +77,8 @@ class RxJava2FlowableToLiveDataViewModel @Inject internal constructor(
                 }
 
                 override fun onNext(response: RepositoryResponse) {
+                    Log.d(TAG, "Da li ce uci sim EEEE: ${response}")
+                    reposInfoAutomatic?.value?.items = response.items
                     reposInfo.value = response
                 }
 
@@ -61,9 +93,6 @@ class RxJava2FlowableToLiveDataViewModel @Inject internal constructor(
             })
     }
 
-    fun observeReposInfo(): LiveData<RepositoryResponse> {
-        return reposInfo
-    }
 
     override fun onCleared() {
         super.onCleared()
