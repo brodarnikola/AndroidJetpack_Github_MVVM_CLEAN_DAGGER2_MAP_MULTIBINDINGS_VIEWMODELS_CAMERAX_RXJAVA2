@@ -9,11 +9,65 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="How do you want to find repos on github? With automatic search or pressing a button?"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescription"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Automatic"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button click"/>
+
+        </RadioGroup>
+
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/etInsertTextAutomatic"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:drawableLeft="@drawable/ic_search"
+            android:drawablePadding="5dp"
+            android:ellipsize="end"
+            android:hint="Search automatic github repositories"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1"
+            android:padding="7dp"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white"
+
+            android:clickable="false"
+            android:alpha="0.4"
+
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+
         <LinearLayout
             android:id="@+id/llSearchText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/etInsertTextAutomatic"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
             <EditText
                 android:id="@+id/etInsertText"
@@ -30,6 +84,10 @@
                 android:padding="7dp"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
+
+                android:enabled="false"
+                android:alpha="0.4"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -39,6 +97,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="FIND REPOS"
+
+                android:enabled="false"
+                android:alpha="0.4"
+
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/etInsertText"
                 app:layout_constraintTop_toTopOf="parent" />

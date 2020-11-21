@@ -19,7 +19,7 @@ package com.vjezba.domain.model
 
 data class RepositoryResponse(
 
-    val total_count: Int, 
+    val total_count: Int,
     val incomplete_results: Boolean,
-    val items: List<RepositoryDetailsResponse>
+    var items: List<RepositoryDetailsResponse>
 )
