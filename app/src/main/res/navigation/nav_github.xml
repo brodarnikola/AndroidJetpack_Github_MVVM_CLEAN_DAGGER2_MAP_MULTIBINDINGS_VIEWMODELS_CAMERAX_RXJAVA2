@@ -45,6 +45,14 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
 
+        <action
+            android:id="@+id/action_view_pager_fragment_to_camerax_fragment"
+            app:destination="@id/camerax_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
     </fragment>
 
     <fragment
@@ -179,6 +187,15 @@
         <argument
             android:name="description"
             app:argType="string" />
+
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/camerax_fragment"
+        android:name="com.vjezba.androidjetpackgithub.ui.fragments.CameraXFragment"
+        android:label="@string/menu_camerax_try_test_functionalities"
+        tools:layout="@layout/fragment_camerax" >
 
     </fragment>
 
