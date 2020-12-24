@@ -37,4 +37,7 @@ abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
     abstract fun contributeRxJava2FlowableToLiveDataFragment(): RxJava2FlowableToLiveDataFragment
 
+    @ContributesAndroidInjector
+    abstract fun contributeCameraXFragment(): CameraXFragment
+
 }

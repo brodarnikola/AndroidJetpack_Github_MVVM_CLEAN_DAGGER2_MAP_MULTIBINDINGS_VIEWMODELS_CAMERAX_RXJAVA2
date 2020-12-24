@@ -21,8 +21,4 @@ abstract class ActivityBuildersModule {
     @ContributesAndroidInjector()
     abstract fun contributeSplashActivity(): SplashActivity
 
-
-    //@ContributesAndroidInjector()
-    //abstract fun contributeRepositoriesActivity(): RxJava2FlowableToLiveDataFragment
-
 }

@@ -132,6 +132,14 @@ dependencies {
     // convert Observables (or Flowables) into LiveData objects
     implementation "android.arch.lifecycle:reactivestreams:1.1.1"
 
+    def camerax_version = "1.0.0-beta07"
+    // CameraX core library using camera2 implementation
+    implementation "androidx.camera:camera-camera2:$cameraxVersion"
+    // CameraX Lifecycle Library
+    implementation "androidx.camera:camera-lifecycle:$cameraxVersion"
+    // CameraX View class
+    implementation "androidx.camera:camera-view:$cameraxViewVersion"
+
 }
 
 def getUnsplashAccess() {
