@@ -45,8 +45,8 @@ buildscript {
         rxAndroidVersion = '2.0.1'
 
         //camerax version
-        cameraxVersion = '1.0.0-beta07'
-        cameraxViewVersion = '1.0.0-alpha14'
+        cameraxVersion = '1.0.0-rc01'
+        cameraxViewVersion = '1.0.0-alpha20'
     }
 
 

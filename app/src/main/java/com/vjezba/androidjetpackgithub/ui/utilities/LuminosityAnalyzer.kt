@@ -2,7 +2,7 @@ package com.vjezba.androidjetpackgithub.ui.utilities
 
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.vjezba.androidjetpackgithub.ui.fragments.LumaListener
+import com.vjezba.androidjetpackgithub.ui.fragments.camerax.LumaListener
 import java.nio.ByteBuffer
 
 class LuminosityAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {

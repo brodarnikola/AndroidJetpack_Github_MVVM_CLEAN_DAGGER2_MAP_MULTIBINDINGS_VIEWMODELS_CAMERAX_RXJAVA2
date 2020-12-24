@@ -23,7 +23,7 @@
             android:title="@string/menu_rxjava2_example" />
 
         <item
-            android:id="@+id/camerax_fragment"
+            android:id="@+id/camerax_permissions_fragment"
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_camerax_try_test_functionalities" />
 

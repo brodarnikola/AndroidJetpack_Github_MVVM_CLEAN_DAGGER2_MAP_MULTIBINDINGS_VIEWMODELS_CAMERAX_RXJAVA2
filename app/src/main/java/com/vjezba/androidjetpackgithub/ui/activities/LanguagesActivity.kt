@@ -109,7 +109,7 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
                 R.id.paggin_with_network_and_db,
                 R.id.rxjava2_flowable_to_livedata_example,
                 R.id.rxjava2_example,
-                R.id.camerax_fragment
+                R.id.camerax_permissions_fragment
             ), drawerLayout
         )
         setupActionBarWithNavController(Navigation.findNavController(this, R.id.nav_host_fragment), appBarConfiguration)
