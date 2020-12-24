@@ -36,6 +36,18 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:elevation="2dp" />
 
+        <Button
+            android:id="@+id/openNewActivityForCamera"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="50dp"
+            android:scaleType="fitCenter"
+            android:text="OPEN NEW ACTIVITY"
+            app:layout_constraintLeft_toRightOf="@+id/camera_capture_button"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:elevation="2dp" />
+
         <androidx.camera.view.PreviewView
             android:id="@+id/viewFinder"
             android:layout_width="match_parent"

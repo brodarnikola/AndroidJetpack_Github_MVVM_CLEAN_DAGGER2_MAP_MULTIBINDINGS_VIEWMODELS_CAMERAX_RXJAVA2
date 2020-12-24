@@ -1,10 +1,13 @@
 package com.vjezba.androidjetpackgithub.ui.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.MenuItem
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -15,7 +18,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -27,17 +32,24 @@ import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.di.ViewModelFactory
 import com.vjezba.androidjetpackgithub.di.injectViewModel
 import com.vjezba.androidjetpackgithub.ui.fragments.HomeViewPagerFragmentDirections
+import com.vjezba.androidjetpackgithub.ui.utilities.FLAGS_FULLSCREEN
 import com.vjezba.androidjetpackgithub.viewmodels.LanguagesActivityViewModel
 import com.vjezba.domain.repository.UserManager
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_languages.*
+import kotlinx.android.synthetic.main.activity_languages_content_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
+
+const val KEY_EVENT_ACTION = "key_event_action"
+const val KEY_EVENT_EXTRA = "key_event_extra"
+private const val IMMERSIVE_FLAG_TIMEOUT = 500L
 
 class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFragmentInjector {
 
@@ -58,8 +70,10 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
     lateinit var userManager: UserManager
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var navController: NavController
+    //private lateinit var navController: NavController
     lateinit var drawerLayout: DrawerLayout
+
+    private lateinit var container: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +83,11 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
 
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    }
+
+    override fun onStart() {
+        super.onStart()
 
 
         val drawerToggle = ActionBarDrawerToggle(
@@ -81,7 +100,7 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
 
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
-        navController = findNavController(R.id.nav_host_fragment)
+        //navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -93,12 +112,10 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
                 R.id.camerax_fragment
             ), drawerLayout
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-    }
+        setupActionBarWithNavController(Navigation.findNavController(this, R.id.nav_host_fragment), appBarConfiguration)
+        navView.setupWithNavController(Navigation.findNavController(this, R.id.nav_host_fragment))
 
-    override fun onStart() {
-        super.onStart()
+        container = findViewById(R.id.nav_host_fragment)
 
         val headerView = nav_view.getHeaderView(0)
         val navUsername = headerView.findViewById(R.id.tvNameOfUser) as TextView
@@ -106,6 +123,39 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
 
         setupSpeedDialView()
         logoutUser()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Before setting full screen flags, we must wait a bit to let UI settle; otherwise, we may
+        // be trying to set app to immersive mode before it's ready and the flags do not stick
+        container.postDelayed({
+            container.systemUiVisibility = FLAGS_FULLSCREEN
+        }, IMMERSIVE_FLAG_TIMEOUT)
+    }
+
+    /** When key down event is triggered, relay it via local broadcast so fragments can handle it */
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                val intent = Intent(KEY_EVENT_ACTION).apply { putExtra(KEY_EVENT_EXTRA, keyCode) }
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
+    }
+
+    companion object {
+
+        /** Use external media if it is available, our app's file directory otherwise */
+        fun getOutputDirectory(context: Context): File {
+            val appContext = context.applicationContext
+            val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
+                File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() } }
+            return if (mediaDir != null && mediaDir.exists())
+                mediaDir else appContext.filesDir
+        }
     }
 
     private fun logoutUser() {
@@ -131,7 +181,9 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
                 R.id.action_slideshow_fragment -> {
                     val direction =
                         HomeViewPagerFragmentDirections.actionViewPagerFragmentToSlideshowFragment()
-                    navController.navigate(direction)
+
+                    Navigation.findNavController(this, R.id.nav_host_fragment).navigate(
+                        direction)
                     false // true to keep the Speed Dial open
                 }
                 R.id.action_dogo -> {
@@ -148,7 +200,7 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        return Navigation.findNavController(this, R.id.nav_host_fragment).navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     override fun onBackPressed() {

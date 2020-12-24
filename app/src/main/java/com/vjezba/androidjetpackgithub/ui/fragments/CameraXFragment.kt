@@ -18,6 +18,7 @@ package com.vjezba.androidjetpackgithub.ui.fragments
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -83,6 +84,7 @@ class CameraXFragment : Fragment(), Injectable {
         return binding.root
     }
 
+
     override fun onStart() {
         super.onStart()
 
@@ -100,6 +102,12 @@ class CameraXFragment : Fragment(), Injectable {
         outputDirectory = getOutputDirectory(this.requireContext())
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        openNewActivityForCamera.setOnClickListener {
+            /*val cameraXIntent = Intent(this.requireContext(), CameraXActivity::class.java)
+            this.requireActivity().startActivity(cameraXIntent)
+            this.requireActivity().finish()*/
+        }
 
     }
 
