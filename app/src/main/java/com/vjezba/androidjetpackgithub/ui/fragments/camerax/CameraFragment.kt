@@ -29,6 +29,8 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.KeyEvent
@@ -38,8 +40,8 @@ import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.ImageButton
 import android.widget.Switch
+import android.widget.Toast
 import androidx.camera.core.*
-import androidx.camera.core.ImageCapture.Metadata
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -60,6 +62,7 @@ import com.vjezba.androidjetpackgithub.ui.utilities.ANIMATION_FAST_MILLIS
 import com.vjezba.androidjetpackgithub.ui.utilities.ANIMATION_SLOW_MILLIS
 import com.vjezba.androidjetpackgithub.ui.utilities.simulateClick
 import kotlinx.android.synthetic.main.activity_languages_main.*
+import kotlinx.android.synthetic.main.camera_ui_container.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -84,10 +87,14 @@ typealias LumaListener = (luma: Double) -> Unit
  */
 class CameraFragment : Fragment() {
 
+    private var startVideoRecording = false
+
     private lateinit var container: ConstraintLayout
     private lateinit var viewFinder: PreviewView
     private lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
+
+    private lateinit var videoCapture: VideoCapture
 
     private var displayId: Int = -1
     private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
@@ -111,7 +118,7 @@ class CameraFragment : Fragment() {
                 // When the volume down button is pressed, simulate a shutter button click
                 KeyEvent.KEYCODE_VOLUME_DOWN -> {
                     val shutter = container
-                            .findViewById<ImageButton>(R.id.camera_capture_button)
+                        .findViewById<ImageButton>(R.id.camera_capture_button)
                     shutter.simulateClick()
                 }
             }
@@ -141,7 +148,7 @@ class CameraFragment : Fragment() {
         // user could have removed them while the app was in paused state.
         if (!PermissionsCameraXFragment.hasPermissions(requireContext())) {
             Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(
-                    CameraFragmentDirections.actionCameraToPermissions()
+                CameraFragmentDirections.actionCameraToPermissions()
             )
         }
     }
@@ -158,10 +165,11 @@ class CameraFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_camerax, container, false)
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
+        inflater.inflate(R.layout.fragment_camerax, container, false)
 
     private fun setGalleryThumbnail(uri: Uri) {
         // Reference of the view that holds the gallery thumbnail
@@ -175,9 +183,9 @@ class CameraFragment : Fragment() {
 
             // Load thumbnail into circular button using Glide
             Glide.with(thumbnail)
-                    .load(uri)
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(thumbnail)
+                .load(uri)
+                .apply(RequestOptions.circleCropTransform())
+                .into(thumbnail)
         }
     }
 
@@ -260,6 +268,7 @@ class CameraFragment : Fragment() {
     }
 
     /** Declare and bind preview, capture and analysis use cases */
+    @SuppressLint("RestrictedApi")
     private fun bindCameraUseCases() {
 
         // Get screen metrics used to setup camera for full screen resolution
@@ -273,21 +282,22 @@ class CameraFragment : Fragment() {
 
         // CameraProvider
         val cameraProvider = cameraProvider
-                ?: throw IllegalStateException("Camera initialization failed.")
+            ?: throw IllegalStateException("Camera initialization failed.")
 
         // CameraSelector
         val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
         // Preview
         preview = Preview.Builder()
-                // We request aspect ratio but no resolution
-                .setTargetAspectRatio(screenAspectRatio)
-                // Set initial target rotation
-                .setTargetRotation(rotation)
-                .build()
+            // We request aspect ratio but no resolution
+            .setTargetAspectRatio(screenAspectRatio)
+            // Set initial target rotation
+            .setTargetRotation(rotation)
+            .build()
 
-        // ImageCapture
-        imageCapture = ImageCapture.Builder()
+        if (!startVideoRecording) {
+            // ImageCapture
+            imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 // We request aspect ratio but no resolution to match preview config, but letting
                 // CameraX optimize for whatever specific resolution best fits our use cases
@@ -297,8 +307,8 @@ class CameraFragment : Fragment() {
                 .setTargetRotation(rotation)
                 .build()
 
-        // ImageAnalysis
-        imageAnalyzer = ImageAnalysis.Builder()
+            // ImageAnalysis
+            imageAnalyzer = ImageAnalysis.Builder()
                 // We request aspect ratio but no resolution
                 .setTargetAspectRatio(screenAspectRatio)
                 // Set initial target rotation, we will have to call this again if rotation changes
@@ -314,6 +324,12 @@ class CameraFragment : Fragment() {
                         Log.d(TAG, "Average luminosity: $luma")
                     })
                 }
+        } else {
+            videoCapture = VideoCapture.Builder()
+                .setTargetRotation(viewFinder.display.rotation)
+                .setCameraSelector(cameraSelector)
+                .build()
+        }
 
         // Must unbind the use-cases before rebinding them
         cameraProvider.unbindAll()
@@ -321,8 +337,15 @@ class CameraFragment : Fragment() {
         try {
             // A variable number of use-cases can be passed here -
             // camera provides access to CameraControl & CameraInfo
-            camera = cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture, imageAnalyzer)
+            if (!startVideoRecording) {
+                camera = cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview, imageCapture, imageAnalyzer
+                )
+            } else {
+                camera = cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview, videoCapture, imageAnalyzer
+                )
+            }
 
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(viewFinder.surfaceProvider)
@@ -351,6 +374,7 @@ class CameraFragment : Fragment() {
     }
 
     /** Method used to re-draw the camera UI controls, called every time configuration changes. */
+    @SuppressLint("RestrictedApi")
     private fun updateCameraUi() {
 
         // Remove previous UI if any
@@ -373,75 +397,9 @@ class CameraFragment : Fragment() {
         // Listener for button used to capture photo
         controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
 
-            // Get a stable reference of the modifiable image capture use case
-            imageCapture?.let { imageCapture ->
-
-                // Create output file to hold the image
-                val photoFile = createFile(outputDirectory, FILENAME, PHOTO_EXTENSION)
-
-                // Setup image capture metadata
-                val metadata = Metadata().apply {
-
-                    // Mirror image when using the front camera
-                    isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
-                }
-
-                // Create output options object which contains file + metadata
-                val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
-                        .setMetadata(metadata)
-                        .build()
-
-                // Setup image capture listener which is triggered after photo has been taken
-                imageCapture.takePicture(
-                        outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
-                    override fun onError(exc: ImageCaptureException) {
-                        Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-                    }
-
-                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                        val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
-                        Log.d(TAG, "Photo capture succeeded: $savedUri")
-
-                        // We can only change the foreground Drawable using API level 23+ API
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            // Update the gallery thumbnail with latest picture taken
-                            setGalleryThumbnail(savedUri)
-                        }
-
-                        // Implicit broadcasts will be ignored for devices running API level >= 24
-                        // so if you only target API level 24+ you can remove this statement
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                            requireActivity().sendBroadcast(
-                                    Intent(android.hardware.Camera.ACTION_NEW_PICTURE, savedUri)
-                            )
-                        }
-
-                        // If the folder selected is an external media directory, this is
-                        // unnecessary but otherwise other apps will not be able to access our
-                        // images unless we scan them using [MediaScannerConnection]
-                        val mimeType = MimeTypeMap.getSingleton()
-                                .getMimeTypeFromExtension(savedUri.toFile().extension)
-                        MediaScannerConnection.scanFile(
-                                context,
-                                arrayOf(savedUri.toFile().absolutePath),
-                                arrayOf(mimeType)
-                        ) { _, uri ->
-                            Log.d(TAG, "Image capture scanned into media store: $uri")
-                        }
-                    }
-                })
-
-                // We can only change the foreground Drawable using API level 23+ API
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-                    // Display flash animation to indicate that photo was captured
-                    container.postDelayed({
-                        container.foreground = ColorDrawable(Color.WHITE)
-                        container.postDelayed(
-                                { container.foreground = null }, ANIMATION_FAST_MILLIS)
-                    }, ANIMATION_SLOW_MILLIS)
-                }
-            }
+            stop_video_recording.visibility = View.GONE
+            startVideoRecording = false
+            bindCameraUseCases()
         }
 
         // Setup for button used to switch cameras
@@ -467,22 +425,165 @@ class CameraFragment : Fragment() {
             // Only navigate when the gallery has photos
             if (true == outputDirectory.listFiles()?.isNotEmpty()) {
                 Navigation.findNavController(
-                        requireActivity(), R.id.nav_host_fragment
-                ).navigate(CameraFragmentDirections
-                        .actionCameraToGalleryCameraxFragment(outputDirectory.absolutePath))
+                    requireActivity(), R.id.nav_host_fragment
+                ).navigate(
+                    CameraFragmentDirections
+                        .actionCameraToGalleryCameraxFragment(outputDirectory.absolutePath)
+                )
             }
         }
 
         // Listener for button used to view the most recent photo
-        controls.findViewById<Switch>(R.id.turnOnOffFlash).setOnCheckedChangeListener { _, isChecked ->
-            if( camera != null && camera?.cameraControl != null ) {
-                if (isChecked)
-                    camera!!.cameraControl.enableTorch(true) // enable torch
-                else
-                    camera!!.cameraControl.enableTorch(false) // enable torch
+        controls.findViewById<Switch>(R.id.turnOnOffFlash)
+            .setOnCheckedChangeListener { _, isChecked ->
+                if (camera != null && camera?.cameraControl != null) {
+                    if (isChecked)
+                        camera!!.cameraControl.enableTorch(true) // enable torch
+                    else
+                        camera!!.cameraControl.enableTorch(false) // enable torch
+                }
             }
+
+        //val videoFile = videoCapture.
+        // Listener for button used to view the most recent photo
+        controls.findViewById<ImageButton>(R.id.camera_video_capture_button).setOnClickListener {
+
+            startVideoRecording = true
+            bindCameraUseCases()
         }
 
+        controls.findViewById<ImageButton>(R.id.stop_video_recording).setOnClickListener {
+            videoCapture.stopRecording()
+            stop_video_recording.visibility = View.GONE
+        }
+
+        controls.findViewById<ImageButton>(R.id.camera_start_video_or_take_image).setOnClickListener {
+            if (startVideoRecording)
+                createNewVideo()
+            else
+                createNewPicture()
+        }
+
+
+    }
+
+    private fun createNewPicture() {
+        //Get a stable reference of the modifiable image capture use case
+        imageCapture?.let { imageCapture ->
+
+            // Create output file to hold the image
+            val photoFile = createFile(outputDirectory, FILENAME, PHOTO_EXTENSION)
+
+            // Setup image capture metadata
+            val metadata = ImageCapture.Metadata().apply {
+
+                // Mirror image when using the front camera
+                isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
+            }
+
+            // Create output options object which contains file + metadata
+            val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
+                .setMetadata(metadata)
+                .build()
+
+            // Setup image capture listener which is triggered after photo has been taken
+            imageCapture.takePicture(
+                outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
+                    override fun onError(exc: ImageCaptureException) {
+                        Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                    }
+
+                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                        val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
+                        Log.d(TAG, "Photo capture succeeded: $savedUri")
+
+                        // We can only change the foreground Drawable using API level 23+ API
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            // Update the gallery thumbnail with latest picture taken
+                            setGalleryThumbnail(savedUri)
+                        }
+
+                        // Implicit broadcasts will be ignored for devices running API level >= 24
+                        // so if you only target API level 24+ you can remove this statement
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                            requireActivity().sendBroadcast(
+                                Intent(android.hardware.Camera.ACTION_NEW_PICTURE, savedUri)
+                            )
+                        }
+
+                        // If the folder selected is an external media directory, this is
+                        // unnecessary but otherwise other apps will not be able to access our
+                        // images unless we scan them using [MediaScannerConnection]
+                        val mimeType = MimeTypeMap.getSingleton()
+                            .getMimeTypeFromExtension(savedUri.toFile().extension)
+                        MediaScannerConnection.scanFile(
+                            context,
+                            arrayOf(savedUri.toFile().absolutePath),
+                            arrayOf(mimeType)
+                        ) { _, uri ->
+                            Log.d(TAG, "Image capture scanned into media store: $uri")
+                        }
+                    }
+                })
+
+            // We can only change the foreground Drawable using API level 23+ API
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+                // Display flash animation to indicate that photo was captured
+                container.postDelayed({
+                    container.foreground = ColorDrawable(Color.WHITE)
+                    container.postDelayed(
+                        { container.foreground = null }, ANIMATION_FAST_MILLIS
+                    )
+                }, ANIMATION_SLOW_MILLIS)
+            }
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun createNewVideo() {
+
+        stop_video_recording.visibility = View.VISIBLE
+
+        //Create output file to hold the image
+        val videoFile = createVideoFile(outputDirectory, VIDEO_FILENAME, VIDEO_EXTENSION)
+        // Setup image capture metadata
+        val metadata = VideoCapture.Metadata().apply {
+            // Mirror image when using the front camera
+            //isReversedHorizontal = lensFacing == CameraSelector.LENS_FACING_FRONT
+        }
+
+        // Create output options object which contains file + metadata
+        val outputOptions = VideoCapture.OutputFileOptions.Builder(videoFile)
+            .setMetadata(metadata)
+            .build()
+
+        videoCapture.startRecording(
+            //context,
+            outputOptions,
+            cameraExecutor,
+            object : VideoCapture.OnVideoSavedCallback {
+
+                /** Called when the video has been successfully saved.  */
+                override fun onVideoSaved(outputFileResults: VideoCapture.OutputFileResults) {
+                    //TODO("Not yet implemented")
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(
+                            context,
+                            "BBBB" + videoFile.name + " is saved",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        //showMessage(file.name + " is saved")
+                    }
+                }
+
+                override fun onError(videoCaptureError: Int, message: String, cause: Throwable?) {
+                    Handler(Looper.getMainLooper()).post {
+                        //showMessage(videoCaptureError.toString() + " " + message)
+                    }
+                }
+            }
+        )
     }
 
     /** Enabled or disabled a button to switch cameras depending on the available cameras */
@@ -596,13 +697,24 @@ class CameraFragment : Fragment() {
 
         private const val TAG = "CameraXBasic"
         private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private const val VIDEO_FILENAME = "yyyy_MM_dd_HH_mm_ss"
         private const val PHOTO_EXTENSION = ".jpg"
+        private const val VIDEO_EXTENSION = ".mp4"
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
 
         /** Helper function used to create a timestamped file */
         private fun createFile(baseFolder: File, format: String, extension: String) =
-                File(baseFolder, SimpleDateFormat(format, Locale.US)
-                        .format(System.currentTimeMillis()) + extension)
+            File(
+                baseFolder, SimpleDateFormat(format, Locale.US)
+                    .format(System.currentTimeMillis()) + extension
+            )
+
+
+        private fun createVideoFile(baseFolder: File, format: String, extension: String) =
+            File(
+                baseFolder, SimpleDateFormat(format, Locale.US)
+                    .format(System.currentTimeMillis()) + extension
+            )
     }
 }
