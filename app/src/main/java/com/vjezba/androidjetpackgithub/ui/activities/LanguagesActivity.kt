@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MenuItem
+import android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
+import android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -130,7 +132,7 @@ class LanguagesActivity : AppCompatActivity(), HasActivityInjector, HasSupportFr
         // Before setting full screen flags, we must wait a bit to let UI settle; otherwise, we may
         // be trying to set app to immersive mode before it's ready and the flags do not stick
         container.postDelayed({
-            container.systemUiVisibility = FLAGS_FULLSCREEN
+            container.systemUiVisibility = SYSTEM_UI_FLAG_FULLSCREEN
         }, IMMERSIVE_FLAG_TIMEOUT)
     }
 

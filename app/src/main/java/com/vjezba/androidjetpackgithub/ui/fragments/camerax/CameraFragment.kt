@@ -37,16 +37,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.ImageButton
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.Camera
-import androidx.camera.core.CameraInfoUnavailableException
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageCapture
+import android.widget.Switch
+import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.Metadata
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -66,13 +59,13 @@ import com.vjezba.androidjetpackgithub.ui.activities.LanguagesActivity
 import com.vjezba.androidjetpackgithub.ui.utilities.ANIMATION_FAST_MILLIS
 import com.vjezba.androidjetpackgithub.ui.utilities.ANIMATION_SLOW_MILLIS
 import com.vjezba.androidjetpackgithub.ui.utilities.simulateClick
+import kotlinx.android.synthetic.main.activity_languages_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
-import java.util.ArrayDeque
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
@@ -193,6 +186,8 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         container = view as ConstraintLayout
         viewFinder = container.findViewById(R.id.view_finder)
+
+        activity?.speedDial?.visibility = View.GONE
 
         // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -477,6 +472,17 @@ class CameraFragment : Fragment() {
                         .actionCameraToGalleryCameraxFragment(outputDirectory.absolutePath))
             }
         }
+
+        // Listener for button used to view the most recent photo
+        controls.findViewById<Switch>(R.id.turnOnOffFlash).setOnCheckedChangeListener { _, isChecked ->
+            if( camera != null && camera?.cameraControl != null ) {
+                if (isChecked)
+                    camera!!.cameraControl.enableTorch(true) // enable torch
+                else
+                    camera!!.cameraControl.enableTorch(false) // enable torch
+            }
+        }
+
     }
 
     /** Enabled or disabled a button to switch cameras depending on the available cameras */

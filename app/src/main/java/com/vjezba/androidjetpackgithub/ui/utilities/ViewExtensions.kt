@@ -32,6 +32,7 @@ const val FLAGS_FULLSCREEN =
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
             View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+// Display normal, bottom view, with home button and back arrow  or View.SYSTEM_UI_FLAG_VISIBLE
 
 /** Milliseconds used for UI animations */
 const val ANIMATION_FAST_MILLIS = 50L

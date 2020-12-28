@@ -39,6 +39,7 @@ import com.vjezba.androidjetpackgithub.BuildConfig
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.ui.utilities.padWithDisplayCutout
 import com.vjezba.androidjetpackgithub.ui.utilities.showImmersive
+import kotlinx.android.synthetic.main.activity_languages_main.*
 import java.util.Locale
 
 val EXTENSION_WHITELIST = arrayOf("JPG")
@@ -82,6 +83,8 @@ class GalleryCameraXFragment internal constructor() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.speedDial?.visibility = View.GONE
 
         //Checking media files list
         if (mediaList.isEmpty()) {
