@@ -33,10 +33,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.webkit.MimeTypeMap
 import android.widget.ImageButton
 import android.widget.Switch
@@ -52,12 +49,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.vjezba.androidjetpackgithub.R
 import com.vjezba.androidjetpackgithub.ui.activities.KEY_EVENT_ACTION
 import com.vjezba.androidjetpackgithub.ui.activities.KEY_EVENT_EXTRA
 import com.vjezba.androidjetpackgithub.ui.activities.LanguagesActivity
+import com.vjezba.androidjetpackgithub.ui.adapters.camerax.CameraXOptions
+import com.vjezba.androidjetpackgithub.ui.adapters.camerax.CameraXTextOptionAdapter
 import com.vjezba.androidjetpackgithub.ui.utilities.ANIMATION_FAST_MILLIS
 import com.vjezba.androidjetpackgithub.ui.utilities.ANIMATION_SLOW_MILLIS
 import com.vjezba.androidjetpackgithub.ui.utilities.simulateClick
@@ -88,6 +88,9 @@ typealias LumaListener = (luma: Double) -> Unit
 class CameraFragment : Fragment() {
 
     private var startVideoRecording = false
+    private val adapter =
+        CameraXTextOptionAdapter(
+            { cameraXAction: String -> setSelectedCameraXClickListener(cameraXAction) })
 
     private lateinit var container: ConstraintLayout
     private lateinit var viewFinder: PreviewView
@@ -118,7 +121,7 @@ class CameraFragment : Fragment() {
                 // When the volume down button is pressed, simulate a shutter button click
                 KeyEvent.KEYCODE_VOLUME_DOWN -> {
                     val shutter = container
-                        .findViewById<ImageButton>(R.id.camera_capture_button)
+                        .findViewById<ImageButton>(R.id.camera_start_video_or_take_image)
                     shutter.simulateClick()
                 }
             }
@@ -151,6 +154,27 @@ class CameraFragment : Fragment() {
                 CameraFragmentDirections.actionCameraToPermissions()
             )
         }
+    }
+
+    private fun initializeRecyclerView() {
+        recyclerView.layoutManager = LinearLayoutManager( requireContext(), LinearLayoutManager.HORIZONTAL, false )
+        recyclerView.adapter = adapter
+    }
+
+    private fun insertDataIntoAdapter() {
+        val cameraXOptions: MutableList<CameraXOptions> = mutableListOf()
+
+        val cameraXOption1 = CameraXOptions()
+        cameraXOption1.cameraXOptions = "Picture"
+        cameraXOption1.isOptionSelected = true
+
+        val cameraXOption2 = CameraXOptions()
+        cameraXOption2.cameraXOptions = "Video"
+        cameraXOption2.isOptionSelected = false
+
+        cameraXOptions.add(cameraXOption1)
+        cameraXOptions.add(cameraXOption2)
+        adapter.setCameraXOptions(cameraXOptions)
     }
 
     override fun onDestroyView() {
@@ -394,12 +418,53 @@ class CameraFragment : Fragment() {
             }
         }
 
-        // Listener for button used to capture photo
-        controls.findViewById<ImageButton>(R.id.camera_capture_button).setOnClickListener {
+        viewFinder.setOnTouchListener { _: View, motionEvent: MotionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> return@setOnTouchListener true
+                MotionEvent.ACTION_UP -> {
+                    // Get the MeteringPointFactory from PreviewView
+                    val factory = viewFinder.getMeteringPointFactory()
 
-            stop_video_recording.visibility = View.GONE
-            startVideoRecording = false
-            bindCameraUseCases()
+                    // Create a MeteringPoint from the tap coordinates
+                    val point = factory.createPoint(motionEvent.x, motionEvent.y)
+
+                    // Create a MeteringAction from the MeteringPoint, you can configure it to specify the metering mode
+                    val action = FocusMeteringAction.Builder(point).build()
+
+                    // Trigger the focus and metering. The method returns a ListenableFuture since the operation
+                    // is asynchronous. You can use it get notified when the focus is successful or if it fails.
+                    camera?.cameraControl?.startFocusAndMetering(action)
+
+                    Log.d(TAG, "Starting to zoom: $action")
+                    return@setOnTouchListener true
+                }
+                else -> return@setOnTouchListener false
+            }
+        }
+
+        // Listen to pinch gestures
+        val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                // Get the camera's current zoom ratio
+                val currentZoomRatio = camera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0F
+
+                // Get the pinch gesture's scaling factor
+                val delta = detector.scaleFactor
+
+                // Update the camera's zoom ratio. This is an asynchronous operation that returns
+                // a ListenableFuture, allowing you to listen to when the operation completes.
+                camera?.cameraControl?.setZoomRatio(currentZoomRatio * delta)
+
+                // Return true, as the event was handled
+                return true
+            }
+        }
+        val scaleGestureDetector = ScaleGestureDetector(context, listener)
+
+        // Attach the pinch gesture listener to the viewfinder
+        viewFinder.setOnTouchListener { _, event ->
+            scaleGestureDetector.onTouchEvent(event)
+            return@setOnTouchListener true
         }
 
         // Setup for button used to switch cameras
@@ -444,14 +509,6 @@ class CameraFragment : Fragment() {
                 }
             }
 
-        //val videoFile = videoCapture.
-        // Listener for button used to view the most recent photo
-        controls.findViewById<ImageButton>(R.id.camera_video_capture_button).setOnClickListener {
-
-            startVideoRecording = true
-            bindCameraUseCases()
-        }
-
         controls.findViewById<ImageButton>(R.id.stop_video_recording).setOnClickListener {
             videoCapture.stopRecording()
             stop_video_recording.visibility = View.GONE
@@ -464,7 +521,20 @@ class CameraFragment : Fragment() {
                 createNewPicture()
         }
 
+        initializeRecyclerView()
+        insertDataIntoAdapter()
+    }
 
+    private fun setSelectedCameraXClickListener(cameraXAction: String) {
+        if( cameraXAction == "Picture" ) {
+            startVideoRecording = false
+            stop_video_recording.visibility = View.GONE
+            bindCameraUseCases()
+        }
+        else {
+            startVideoRecording = true
+            bindCameraUseCases()
+        }
     }
 
     private fun createNewPicture() {
