@@ -55,30 +55,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <!--<ImageButton
-        android:id="@+id/camera_capture_button"
-        android:layout_width="@dimen/round_button_large"
-        android:layout_height="@dimen/round_button_large"
-        android:layout_marginBottom="@dimen/shutter_button_margin"
-        android:background="@drawable/ic_shutter"
-        android:contentDescription="@string/capture_button_alt"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toStartOf="@+id/camera_switch_button"
-        app:layout_constraintStart_toEndOf="@+id/camera_video_capture_button"
-        app:layout_constraintBottom_toBottomOf="parent"   />
-
-    <ImageButton
-        android:id="@+id/camera_video_capture_button"
-        android:layout_width="@dimen/round_button_large"
-        android:layout_height="@dimen/round_button_large"
-        android:layout_marginBottom="@dimen/shutter_button_margin"
-        android:background="@drawable/ic_shutter"
-        android:contentDescription="@string/capture_button_alt"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/photo_view_button"
-        app:layout_constraintStart_toEndOf="@+id/camera_capture_button" />-->
-
     <ImageButton
         android:id="@+id/camera_start_video_or_take_image"
         android:layout_width="@dimen/round_button_large"

@@ -70,9 +70,11 @@ class GalleryCameraXFragment internal constructor() : Fragment() {
 
         // Walk through all files in the root directory
         // We reverse the order of the list to present the last photos first
-        mediaList = rootDirectory.listFiles { file ->
-            EXTENSION_WHITELIST.contains(file.extension.toUpperCase(Locale.ROOT))
-        }.sortedDescending().toMutableList() ?: mutableListOf()
+//        mediaList = rootDirectory.listFiles() { file ->
+//            //EXTENSION_WHITELIST.contains(file.extension.toUpperCase(Locale.ROOT))
+//        }.sortedDescending().toMutableList() ?: mutableListOf()
+
+        mediaList = rootDirectory.listFiles().sortedDescending().toMutableList() ?: mutableListOf()
     }
 
     override fun onCreateView(
@@ -94,7 +96,7 @@ class GalleryCameraXFragment internal constructor() : Fragment() {
 
         // Populate the ViewPager and implement a cache of two media items
         val mediaViewPager = view.findViewById<ViewPager>(R.id.photo_view_pager).apply {
-            offscreenPageLimit = 2
+            //offscreenPageLimit = 2
             adapter = MediaPagerAdapter(childFragmentManager)
         }
 
