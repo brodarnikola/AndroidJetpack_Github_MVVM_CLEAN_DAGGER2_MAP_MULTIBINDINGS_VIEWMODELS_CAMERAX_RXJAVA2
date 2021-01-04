@@ -226,9 +226,35 @@
         android:id="@+id/gallery_camerax_fragment"
         android:name="com.vjezba.androidjetpackgithub.ui.fragments.camerax.GalleryCameraXFragment"
         android:label="GalleryFragment" >
+
         <argument
             android:name="root_directory"
             app:argType="string" />
+
+
+        <action
+            android:id="@+id/galery_camerax_fragment_to_video_photo_camerax_fragment"
+            app:destination="@id/video_photo_camerax_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/video_photo_camerax_fragment"
+        android:name="com.vjezba.androidjetpackgithub.ui.fragments.camerax.PhotoOrVideoFragment"
+        android:label="PhotoVideoFramgnet" >
+
+        <argument
+            android:name="root_directory"
+            app:argType="string" />
+
+        <argument
+            android:name="selected_photo_or_video"
+            app:argType="string" />
+
     </fragment>
 
 
